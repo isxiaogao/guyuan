@@ -1,0 +1,129 @@
+/* 详情轮播 */
+.detail-swiper {
+  width: 100%;
+  height: 750rpx;
+  background: #f0f0f0;
+}
+.detail-image {
+  width: 100%;
+  height: 100%;
+}
+
+.detail-content {
+  background: #fff;
+  border-radius: 32rpx 32rpx 0 0;
+  margin-top: -32rpx;
+  position: relative;
+  z-index: 1;
+}
+
+/* 价格区 */
+.price-section {
+  padding: 30rpx 30rpx 0;
+}
+.price-row {
+  display: flex;
+  align-items: baseline;
+}
+.price-big {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #c08463;
+}
+.price-original {
+  font-size: 26rpx;
+  color: #999;
+  text-decoration: line-through;
+  margin-left: 16rpx;
+}
+.discount-tag {
+  background: #c08463;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+  margin-left: 16rpx;
+}
+
+/* 标题区 */
+.title-section {
+  padding: 20rpx 30rpx 0;
+}
+.product-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* 描述区 */
+.desc-section {
+  padding: 20rpx 30rpx;
+}
+.product-desc {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.7;
+}
+
+/* 参数区 */
+.params-section {
+  padding: 20rpx 30rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+.section-title-line {
+  margin-bottom: 16rpx;
+}
+.params-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+.params-content {
+  padding: 16rpx 0;
+}
+.params-text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.bottom-placeholder {
+  height: 20rpx;
+}
+
+/* 底部操作栏 */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  padding: 16rpx 24rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+.bar-btn {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx 0;
+  border-radius: 48rpx;
+  margin: 0 8rpx;
+}
+.bar-btn-cart {
+  background: #f5e6d8;
+}
+.bar-btn-buy {
+  background: #c08463;
+}
+.bar-btn-text {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #fff;
+}
+.bar-btn-cart .bar-btn-text {
+  color: #c08463;
+}

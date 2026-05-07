@@ -1,0 +1,52 @@
+<!-- 商品图片轮播 -->
+<swiper class="detail-swiper" indicator-dots="{{images.length > 1}}" indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff" bindchange="onImageChange" circular="{{true}}">
+  <swiper-item wx:for="{{images}}" wx:key="*this">
+    <image class="detail-image" src="{{item}}" mode="aspectFill" bindtap="onPreviewImage" data-index="{{index}}" />
+  </swiper-item>
+</swiper>
+
+<view class="detail-content" wx:if="{{product}}">
+  <!-- 价格信息 -->
+  <view class="price-section">
+    <view class="price-row">
+      <text class="price-big">¥{{product.price}}</text>
+      <text class="price-original">¥{{product.originalPrice}}</text>
+      <view class="discount-tag" wx:if="{{product.discount}}">
+        <text>{{product.discount}}折</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品名称 -->
+  <view class="title-section">
+    <text class="product-title">{{product.name}}</text>
+  </view>
+
+  <!-- 商品描述 -->
+  <view class="desc-section">
+    <text class="product-desc">{{product.description}}</text>
+  </view>
+
+  <!-- 商品参数 -->
+  <view class="params-section">
+    <view class="section-title-line">
+      <text class="params-title">商品参数</text>
+    </view>
+    <view class="params-content">
+      <text class="params-text">{{product.detail}}</text>
+    </view>
+  </view>
+
+  <!-- 占位，避免被底部按钮遮挡 -->
+  <view class="bottom-placeholder"></view>
+</view>
+
+<!-- 底部操作栏 -->
+<view class="bottom-bar">
+  <view class="bar-btn bar-btn-cart" bindtap="onAddCart">
+    <text class="bar-btn-text">加入购物车</text>
+  </view>
+  <view class="bar-btn bar-btn-buy" bindtap="onBuyNow">
+    <text class="bar-btn-text">立即购买</text>
+  </view>
+</view>

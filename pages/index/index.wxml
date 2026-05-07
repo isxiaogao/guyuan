@@ -1,0 +1,79 @@
+<!-- 轮播图 -->
+<swiper class="banner-swiper" indicator-dots="{{true}}" autoplay="{{true}}" interval="{{3000}}" duration="{{500}}" indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#c08463" circular="{{true}}">
+  <swiper-item wx:for="{{banners}}" wx:key="id">
+    <view class="banner-item" bindtap="onProductTap" data-id="{{item.id}}">
+      <image class="banner-image" src="{{item.image}}" mode="aspectFill" />
+      <view class="banner-overlay">
+        <text class="banner-title">{{item.title}}</text>
+      </view>
+    </view>
+  </swiper-item>
+</swiper>
+
+<!-- 分类导航 -->
+<view class="section">
+  <view class="section-header">
+    <text class="section-title">品类精选</text>
+  </view>
+  <scroll-view class="category-scroll" scroll-x enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="category-list">
+      <view class="category-item" wx:for="{{categories}}" wx:key="id" bindtap="onCategoryTap" data-id="{{item.id}}" data-name="{{item.name}}">
+        <view class="category-icon-wrapper">
+          <image class="category-icon" src="{{item.icon}}" mode="aspectFit" />
+        </view>
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+</view>
+
+<!-- 热销商品 -->
+<view class="section">
+  <view class="section-header">
+    <text class="section-title">热销单品</text>
+    <text class="section-more" bindtap="onCategoryTap" data-id="0" data-name="全部">查看全部 ›</text>
+  </view>
+  <view class="product-grid">
+    <view class="product-card" wx:for="{{hotProducts}}" wx:key="id" bindtap="onProductTap" data-id="{{item.id}}">
+      <view class="product-image-wrapper">
+        <image class="product-image" src="{{item.image}}" mode="aspectFill" lazy-load="{{true}}" />
+        <view class="product-tag" wx:if="{{item.tag}}">{{item.tag}}</view>
+      </view>
+      <view class="product-info">
+        <text class="product-name text-ellipsis">{{item.name}}</text>
+        <view class="product-price">
+          <text class="price-current">¥{{item.price}}</text>
+          <text class="price-original">¥{{item.originalPrice}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 新品推荐 -->
+<view class="section">
+  <view class="section-header">
+    <text class="section-title">新品上架</text>
+  </view>
+  <view class="product-grid">
+    <view class="product-card" wx:for="{{newProducts}}" wx:key="id" bindtap="onProductTap" data-id="{{item.id}}">
+      <view class="product-image-wrapper">
+        <image class="product-image" src="{{item.image}}" mode="aspectFill" lazy-load="{{true}}" />
+        <view class="product-tag" wx:if="{{item.tag}}">{{item.tag}}</view>
+      </view>
+      <view class="product-info">
+        <text class="product-name text-ellipsis">{{item.name}}</text>
+        <view class="product-price">
+          <text class="price-current">¥{{item.price}}</text>
+          <text class="price-original">¥{{item.originalPrice}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 底部品牌信息 -->
+<view class="footer">
+  <text class="footer-brand">故媛女装</text>
+  <text class="footer-text">用心搭配 · 只为更美的你</text>
+</view>

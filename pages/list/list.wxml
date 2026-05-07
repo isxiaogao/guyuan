@@ -1,0 +1,36 @@
+<!-- 分类标签 -->
+<scroll-view class="category-bar" scroll-x enhanced="{{true}}" show-scrollbar="{{false}}">
+  <view class="category-tags">
+    <view class="tag-item {{currentCategory === item.id ? 'active' : ''}}" wx:for="{{categories}}" wx:key="id" bindtap="onCategoryTap" data-id="{{item.id}}">
+      <text>{{item.name}}</text>
+    </view>
+  </view>
+</scroll-view>
+
+<!-- 加载中 -->
+<view class="loading-wrap" wx:if="{{loading}}">
+  <text class="loading-text">加载中...</text>
+</view>
+
+<!-- 空状态 -->
+<view class="empty" wx:elif="{{empty}}">
+  <view class="empty-icon">👗</view>
+  <text class="empty-text">该分类暂无商品</text>
+</view>
+
+<!-- 商品列表 -->
+<view class="product-list" wx:else>
+  <view class="product-card" wx:for="{{products}}" wx:key="id" bindtap="onProductTap" data-id="{{item.id}}">
+    <view class="product-image-wrapper">
+      <image class="product-image" src="{{item.image}}" mode="aspectFill" lazy-load="{{true}}" />
+      <view class="product-tag" wx:if="{{item.tag}}">{{item.tag}}</view>
+    </view>
+    <view class="product-info">
+      <text class="product-name text-ellipsis">{{item.name}}</text>
+      <view class="product-price-row">
+        <text class="price-current">¥{{item.price}}</text>
+        <text class="price-original">¥{{item.originalPrice}}</text>
+      </view>
+    </view>
+  </view>
+</view>
