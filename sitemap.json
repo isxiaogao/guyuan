@@ -1,5 +1,5 @@
 {
   "rules": [
-    { "action": "allow", "path": "*" }
+    { "action": "allow", "page": "*" }
   ]
 }

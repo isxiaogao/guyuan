@@ -5,27 +5,31 @@ Page({
     product: null,
     currentImage: 0,
     images: [],
-    loading: true
+    loading: true,
+    isFav: false
   },
 
-  async onLoad(options) {
-    try {
-      const product = await request(`/api/products/${options.id}`)
-      const discount = product.originalPrice
-        ? Math.round(product.price / product.originalPrice * 10)
+  onLoad(options) {
+    request(`/api/products/${options.id}`).then(function (product) {
+      const discount = product.originalPrice && product.price < product.originalPrice
+        ? (product.price / product.originalPrice * 10).toFixed(1).replace(/\.0$/, '')
         : ''
+
+      const favs = wx.getStorageSync('favorites') || []
+      const isFav = favs.indexOf(Number(options.id)) !== -1
 
       this.setData({
         product: { ...product, discount },
         images: product.images,
-        loading: false
+        loading: false,
+        isFav: isFav
       })
 
       wx.setNavigationBarTitle({ title: product.name })
-    } catch (e) {
+    }.bind(this)).catch(function () {
       wx.showToast({ title: '商品不存在', icon: 'none' })
       setTimeout(() => wx.navigateBack(), 1500)
-    }
+    })
   },
 
   onImageChange(e) {
@@ -40,11 +44,25 @@ Page({
     })
   },
 
-  onAddCart() {
-    wx.showToast({ title: '已加入购物车', icon: 'success' })
+  onContactAuthor() {
+    wx.navigateTo({ url: '/pages/about/about' })
   },
 
-  onBuyNow() {
-    wx.showToast({ title: '功能开发中...', icon: 'none' })
+  onFavorite() {
+    const id = this.data.product.id
+    const favs = wx.getStorageSync('favorites') || []
+    let isFav = this.data.isFav
+    if (isFav) {
+      const idx = favs.indexOf(id)
+      if (idx !== -1) favs.splice(idx, 1)
+      isFav = false
+      wx.showToast({ title: '已取消收藏', icon: 'none' })
+    } else {
+      favs.push(id)
+      isFav = true
+      wx.showToast({ title: '已收藏', icon: 'success' })
+    }
+    wx.setStorageSync('favorites', favs)
+    this.setData({ isFav: isFav })
   }
 })

@@ -32,8 +32,17 @@
     <view class="section-title-line">
       <text class="params-title">商品参数</text>
     </view>
-    <view class="params-content">
-      <text class="params-text">{{product.detail}}</text>
+    <view class="params-row" wx:if="{{product.size}}">
+      <text class="params-label">尺码：</text>
+      <text class="params-value">{{product.size}}</text>
+    </view>
+    <view class="params-row" wx:if="{{product.color}}">
+      <text class="params-label">颜色：</text>
+      <text class="params-value">{{product.color}}</text>
+    </view>
+    <view class="params-row" wx:if="{{product.fabric}}">
+      <text class="params-label">面料：</text>
+      <text class="params-value">{{product.fabric}}</text>
     </view>
   </view>
 
@@ -41,12 +50,12 @@
   <view class="bottom-placeholder"></view>
 </view>
 
-<!-- 底部操作栏 -->
+<!-- 底部联系作者 -->
 <view class="bottom-bar">
-  <view class="bar-btn bar-btn-cart" bindtap="onAddCart">
-    <text class="bar-btn-text">加入购物车</text>
+  <view class="bar-btn bar-btn-contact" bindtap="onContactAuthor">
+    <text class="bar-btn-text">联系作者</text>
   </view>
-  <view class="bar-btn bar-btn-buy" bindtap="onBuyNow">
-    <text class="bar-btn-text">立即购买</text>
+  <view class="bar-btn bar-btn-fav" bindtap="onFavorite">
+    <text class="bar-btn-text">{{isFav ? '已收藏' : '收藏'}}</text>
   </view>
 </view>

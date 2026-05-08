@@ -1,0 +1,5 @@
+function icon(type) {
+  var map = { text: 'T', price: '¥', barcode: '║', qrcode: '▣', box: '☐', line: '━' }
+  return map[type] || '?'
+}
+module.exports = { icon: icon }

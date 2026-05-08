@@ -1,3 +1,9 @@
+<!-- 搜索框 -->
+<view class="search-bar">
+  <input class="search-input" placeholder="搜索商品名称" value="{{searchKeyword}}" bindinput="onSearchInput" bindconfirm="onSearchConfirm" confirm-type="search" />
+  <view class="search-clear" wx:if="{{searchKeyword}}" bindtap="onClearSearch">×</view>
+</view>
+
 <!-- 分类标签 -->
 <scroll-view class="category-bar" scroll-x enhanced="{{true}}" show-scrollbar="{{false}}">
   <view class="category-tags">

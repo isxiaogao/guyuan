@@ -1,0 +1,274 @@
+<wxs src="./label.wxs" module="util" />
+
+<!-- 模板列表 -->
+<view class="page" wx:if="{{view === 'list'}}">
+  <view class="page-header">
+    <text class="page-title">标签模板</text>
+    <view class="btn-new" bindtap="onNewTemplate">+ 新建</view>
+  </view>
+
+  <view class="empty-state" wx:if="{{templates.length === 0}}">
+    <text class="empty-icon">🏷</text>
+    <text class="empty-text">暂无标签模板</text>
+    <text class="empty-hint">点击右上角"新建"开始创建</text>
+  </view>
+
+  <view class="template-list" wx:else>
+    <view class="template-card" wx:for="{{templates}}" wx:key="id" bindtap="onEditTemplate" data-index="{{index}}">
+      <view class="card-header">
+        <text class="card-name">{{item.name}}</text>
+        <text class="card-size">{{item.width}}×{{item.height}}mm</text>
+      </view>
+      <view class="card-info">
+        <text>{{item.elements.length}} 个元素</text>
+        <text class="card-dpi" wx:if="{{item.dpi}}">{{item.dpi}} DPI</text>
+      </view>
+      <view class="card-actions">
+        <view class="card-btn card-btn-print" catchtap="onPrintTemplate" data-index="{{index}}">打印</view>
+        <view class="card-btn card-btn-delete" catchtap="onDeleteTemplate" data-index="{{index}}">删除</view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 新建模板 -->
+<view class="page" wx:if="{{view === 'newTemplate'}}">
+  <view class="form-header">
+    <text class="form-title">新建标签模板</text>
+  </view>
+
+  <view class="form-card">
+    <view class="form-item">
+      <text class="form-label">模板名称</text>
+      <input class="form-input" placeholder="如：价格标签" value="{{form.name}}" bindinput="onFormInput" data-field="name" />
+    </view>
+    <view class="form-row">
+      <view class="form-item form-item-half">
+        <text class="form-label">宽度 (mm)</text>
+        <input class="form-input" type="digit" placeholder="40" value="{{form.width}}" bindinput="onFormInput" data-field="width" />
+      </view>
+      <view class="form-item form-item-half">
+        <text class="form-label">高度 (mm)</text>
+        <input class="form-input" type="digit" placeholder="30" value="{{form.height}}" bindinput="onFormInput" data-field="height" />
+      </view>
+    </view>
+    <view class="form-item">
+      <text class="form-label">打印机分辨率</text>
+      <picker range="{{dpiOptions}}" value="{{dpiIndex}}" bindchange="onDpiChange">
+        <view class="picker-value">{{dpiIndex >= 0 ? dpiOptions[dpiIndex] : '203 DPI'}}</view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="form-actions">
+    <view class="form-btn form-btn-cancel" bindtap="onCancelNew">取消</view>
+    <view class="form-btn form-btn-confirm" bindtap="onConfirmNew">创建</view>
+  </view>
+</view>
+
+<!-- 模板编辑 -->
+<view class="page page-edit" wx:if="{{view === 'edit'}}">
+  <!-- 画布预览 -->
+  <view class="canvas-wrapper">
+    <view class="canvas-container" style="width: {{canvasW}}px; height: {{canvasH}}px;">
+      <view class="canvas-border"></view>
+      <view class="canvas-element {{editingElId === item.id ? 'el-active' : ''}}"
+        wx:for="{{template.elements}}" wx:key="id"
+        style="left: {{item.x / template.width * canvasW}}px; top: {{item.y / template.height * canvasH}}px; width: {{item.width / template.width * canvasW}}px; height: {{item.height / template.height * canvasH}}px;"
+        bindtap="onSelectElement" data-id="{{item.id}}"
+        bindtouchstart="onTouchStart" data-id="{{item.id}}"
+        bindtouchmove="onTouchMove" bindtouchend="onTouchEnd">
+        <view class="el-content el-type-{{item.type}}">
+          <text class="el-text-preview" wx:if="{{item.type === 'text' || item.type === 'price'}}">{{item.content || (item.variable ? '[' + item.variable + ']' : '')}}</text>
+          <text class="el-text-preview" wx:elif="{{item.type === 'barcode'}}">条形码</text>
+          <text class="el-text-preview" wx:elif="{{item.type === 'qrcode'}}">二维码</text>
+          <view class="el-box-preview" wx:elif="{{item.type === 'box'}}"></view>
+          <view class="el-line-preview" wx:elif="{{item.type === 'line'}}"></view>
+        </view>
+      </view>
+    </view>
+    <text class="canvas-size-label">{{template.width}}×{{template.height}}mm</text>
+  </view>
+
+  <!-- 元素列表 -->
+  <view class="element-list">
+    <text class="section-label">元素 ({{template.elements.length}})</text>
+    <view class="el-item" wx:for="{{template.elements}}" wx:key="id" bindtap="onSelectElement" data-id="{{item.id}}">
+      <view class="el-item-left">
+        <text class="el-item-icon">{{util.icon(item.type)}}</text>
+        <text class="el-item-name">{{item.content || item.variable || item.type}}</text>
+      </view>
+      <view class="el-item-actions">
+        <view class="el-item-btn el-item-btn-del" catchtap="onDeleteElement" data-id="{{item.id}}">删除</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加元素 -->
+  <view class="add-element-bar">
+    <view class="add-el-btn" bindtap="onAddElement" data-type="text">
+      <text class="add-el-icon">T</text>
+      <text class="add-el-name">文本</text>
+    </view>
+    <view class="add-el-btn" bindtap="onAddElement" data-type="price">
+      <text class="add-el-icon">¥</text>
+      <text class="add-el-name">价格</text>
+    </view>
+    <view class="add-el-btn" bindtap="onAddElement" data-type="barcode">
+      <text class="add-el-icon">║</text>
+      <text class="add-el-name">条码</text>
+    </view>
+    <view class="add-el-btn" bindtap="onAddElement" data-type="qrcode">
+      <text class="add-el-icon">▣</text>
+      <text class="add-el-name">二维码</text>
+    </view>
+    <view class="add-el-btn" bindtap="onAddElement" data-type="box">
+      <text class="add-el-icon">☐</text>
+      <text class="add-el-name">边框</text>
+    </view>
+    <view class="add-el-btn" bindtap="onAddElement" data-type="line">
+      <text class="add-el-icon">━</text>
+      <text class="add-el-name">分割线</text>
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="edit-actions">
+    <view class="edit-btn edit-btn-secondary" bindtap="onBackToList">返回</view>
+    <view class="edit-btn edit-btn-print" bindtap="onPrintTemplate">打印</view>
+    <view class="edit-btn edit-btn-primary" bindtap="onSaveTemplate">保存</view>
+  </view>
+</view>
+
+<!-- 编辑元素属性 -->
+<view class="page" wx:if="{{view === 'editElement'}}">
+  <view class="form-header">
+    <text class="form-title">编辑元素</text>
+  </view>
+
+  <view class="form-card">
+    <view class="form-item">
+      <text class="form-label">元素类型</text>
+      <text class="form-static">{{elForm.typeName}}</text>
+    </view>
+
+    <!-- 内容 -->
+    <view class="form-item" wx:if="{{elForm.type === 'text'}}">
+      <text class="form-label">文本内容</text>
+      <input class="form-input" placeholder="输入文本" value="{{elForm.content}}" bindinput="onElInput" data-field="content" />
+    </view>
+
+    <!-- 变量映射 -->
+    <view class="form-item" wx:if="{{elForm.type === 'price' || elForm.type === 'barcode'}}">
+      <text class="form-label">数据来源</text>
+      <picker range="{{variableOptions}}" value="{{elFormVariableIndex}}" bindchange="onVariableChange">
+        <view class="picker-value">{{elForm.variable ? elForm.variable : '固定内容'}}</view>
+      </picker>
+    </view>
+
+    <!-- 二维码内容 -->
+    <view class="form-item" wx:if="{{elForm.type === 'qrcode'}}">
+      <text class="form-label">二维码内容</text>
+      <input class="form-input" placeholder="URL 或文本" value="{{elForm.content}}" bindinput="onElInput" data-field="content" />
+    </view>
+
+    <view class="form-section-label">位置 (mm)</view>
+    <view class="form-row">
+      <view class="form-item form-item-half">
+        <text class="form-label">X</text>
+        <input class="form-input" type="digit" value="{{elForm.x}}" bindinput="onElInput" data-field="x" />
+      </view>
+      <view class="form-item form-item-half">
+        <text class="form-label">Y</text>
+        <input class="form-input" type="digit" value="{{elForm.y}}" bindinput="onElInput" data-field="y" />
+      </view>
+    </view>
+    <view class="form-row">
+      <view class="form-item form-item-half">
+        <text class="form-label">宽度</text>
+        <input class="form-input" type="digit" value="{{elForm.width}}" bindinput="onElInput" data-field="width" />
+      </view>
+      <view class="form-item form-item-half">
+        <text class="form-label">高度</text>
+        <input class="form-input" type="digit" value="{{elForm.height}}" bindinput="onElInput" data-field="height" />
+      </view>
+    </view>
+
+    <view class="form-section-label">样式</view>
+
+    <view class="form-item" wx:if="{{elForm.type === 'text' || elForm.type === 'price'}}">
+      <text class="form-label">字号 (pt)</text>
+      <picker range="{{fontSizeOptions}}" value="{{elFormFontSizeIndex}}" bindchange="onFontSizeChange">
+        <view class="picker-value">{{elForm.fontSize || 16}} pt</view>
+      </picker>
+    </view>
+
+    <view class="form-item" wx:if="{{elForm.type === 'text' || elForm.type === 'price'}}">
+      <text class="form-label">对齐方式</text>
+      <picker range="{{alignOptions}}" value="{{elFormAlignIndex}}" bindchange="onAlignChange">
+        <view class="picker-value">{{elForm.align || '左对齐'}}</view>
+      </picker>
+    </view>
+
+    <view class="form-item" wx:if="{{elForm.type === 'barcode'}}">
+      <text class="form-label">显示条码下方文字</text>
+      <switch checked="{{elForm.showText !== false}}" bindchange="onShowTextChange" />
+    </view>
+
+    <view class="form-item" wx:if="{{elForm.type === 'box'}}">
+      <text class="form-label">边框宽度</text>
+      <input class="form-input" type="number" value="{{elForm.borderWidth || 1}}" bindinput="onElInput" data-field="borderWidth" />
+    </view>
+  </view>
+
+  <view class="form-actions">
+    <view class="form-btn form-btn-cancel" bindtap="onCancelElement">取消</view>
+    <view class="form-btn form-btn-confirm" bindtap="onSaveElement">确定</view>
+  </view>
+</view>
+
+<!-- 打印页面 -->
+<view class="page" wx:if="{{view === 'print'}}">
+  <view class="form-header">
+    <text class="form-title">打印标签</text>
+  </view>
+
+  <view class="form-card">
+    <!-- 模板信息 -->
+    <view class="print-info">
+      <text class="print-info-label">模板：</text>
+      <text class="print-info-value">{{template.name}} ({{template.width}}×{{template.height}}mm)</text>
+    </view>
+
+    <!-- 打印机 -->
+    <view class="print-info">
+      <text class="print-info-label">打印机：</text>
+      <text class="print-info-value {{printerName ? '' : 'text-muted'}}" bindtap="onChoosePrinter">
+        {{printerName || '点击选择'}}
+      </text>
+    </view>
+
+    <!-- 打印份数 -->
+    <view class="form-item">
+      <text class="form-label">打印份数</text>
+      <view class="copy-control">
+        <view class="copy-btn" bindtap="onCopyMinus">−</view>
+        <text class="copy-value">{{printCopies}}</text>
+        <view class="copy-btn" bindtap="onCopyPlus">+</view>
+      </view>
+    </view>
+
+    <!-- 商品选择 -->
+    <view class="form-item">
+      <text class="form-label">选择商品</text>
+      <picker range="{{productNames}}" value="{{productIndex}}" bindchange="onProductChange">
+        <view class="picker-value">{{productIndex >= 0 ? productNames[productIndex] : '请选择商品'}}</view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="form-actions">
+    <view class="form-btn form-btn-cancel" bindtap="onBackToEdit">返回</view>
+    <view class="form-btn form-btn-confirm" bindtap="onDoPrint" disabled="{{!printerConnected || productIndex < 0}}">打印</view>
+  </view>
+</view>

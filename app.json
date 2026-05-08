@@ -2,11 +2,35 @@
   "pages": [
     "pages/index/index",
     "pages/list/list",
-    "pages/detail/detail"
+    "pages/detail/detail",
+    "pages/add/add",
+    "pages/category/category",
+    "pages/about/about",
+    "pages/label/label"
   ],
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#c08463",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tab_home.png",
+        "selectedIconPath": "images/tab_home_active.png"
+      },
+      {
+        "pagePath": "pages/about/about",
+        "text": "关于",
+        "iconPath": "images/tab_about.png",
+        "selectedIconPath": "images/tab_about_active.png"
+      }
+    ]
+  },
   "window": {
     "navigationBarBackgroundColor": "#1a1a1a",
-    "navigationBarTitleText": "故媛女装",
+    "navigationBarTitleText": "故媛工作室",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#f5f5f5",
     "backgroundTextStyle": "dark"

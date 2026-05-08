@@ -1,0 +1,68 @@
+<view class="page">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="avatar-circle">故媛</view>
+    <text class="app-name">故媛工作室</text>
+    <text class="app-desc">发现属于你的风格</text>
+  </view>
+
+  <!-- 关于本站 -->
+  <view class="section">
+    <text class="section-title">关于本站</text>
+    <text class="section-content">
+      故媛工作室是一个专注于女装搭配推荐的小型展示平台。在这里你可以浏览各类女装单品，获取穿搭灵感。
+    </text>
+  </view>
+
+  <!-- 联系作者 -->
+  <view class="section">
+    <text class="section-title">联系作者</text>
+    <view class="contact-item" bindtap="onCopyWechat">
+      <text class="contact-label">微信号</text>
+      <text class="contact-value">G-17708109825</text>
+      <text class="contact-hint">点击复制</text>
+    </view>
+    <view class="contact-item">
+      <text class="contact-label">电话</text>
+      <text class="contact-value">17708109825</text>
+    </view>
+  </view>
+
+  <!-- 赞赏支持 -->
+  <view class="section">
+    <text class="section-title">赞赏支持</text>
+    <view class="reward-box" bindtap="onReward">
+      <view class="reward-icon">☕</view>
+      <text class="reward-text">请作者喝杯咖啡</text>
+    </view>
+  </view>
+
+  <!-- 工作室地址 -->
+  <view class="section">
+    <text class="section-title">工作室地址</text>
+    <view class="tech-item">
+      <text class="tech-label">地址</text>
+      <text class="tech-value">成都市双流区棠中路二段138号</text>
+    </view>
+    <view class="tech-item">
+      <text class="tech-label">营业</text>
+      <text class="tech-value">周一至周日 10:00-21:00</text>
+    </view>
+  </view>
+
+  <!-- 底部 -->
+  <view class="footer">
+    <text class="footer-text">© 2026 故媛工作室 · 仅供学习交流</text>
+  </view>
+</view>
+
+<!-- 赞赏弹窗 -->
+<view class="modal-mask" wx:if="{{showReward}}" bindtap="onCloseReward">
+  <view class="modal-content" catchtap>
+    <text class="modal-title">赞赏支持</text>
+    <view class="qr-placeholder">
+      <text class="qr-hint">在此放置微信收款码</text>
+    </view>
+    <view class="modal-close" bindtap="onCloseReward">关闭</view>
+  </view>
+</view>

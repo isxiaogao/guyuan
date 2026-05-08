@@ -1,0 +1,38 @@
+<view class="page">
+  <!-- 新增分类 -->
+  <view class="add-section">
+    <input class="add-input" placeholder="输入新分类名称" value="{{newName}}" bindinput="onInput" maxlength="20" />
+    <view class="add-btn" bindtap="onAdd" loading="{{adding}}" disabled="{{adding}}">添加</view>
+  </view>
+
+  <!-- 分类列表 -->
+  <view class="list-section" wx:if="{{list.length > 0}}">
+    <view class="list-item" wx:for="{{list}}" wx:key="id">
+      <view class="item-left">
+        <text class="item-name">{{item.name}}</text>
+        <text class="item-id">ID: {{item.id}}</text>
+      </view>
+      <view class="item-right">
+        <view class="btn-edit" bindtap="onEdit" data-id="{{item.id}}" data-name="{{item.name}}">编辑</view>
+        <view class="btn-del" bindtap="onDelete" data-id="{{item.id}}" data-name="{{item.name}}">删除</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:else>
+    <text class="empty-text">暂无分类</text>
+  </view>
+</view>
+
+<!-- 编辑弹窗 -->
+<view class="modal-mask" wx:if="{{editing}}" bindtap="onCancelEdit">
+  <view class="modal-content" catchtap>
+    <text class="modal-title">编辑分类</text>
+    <input class="modal-input" value="{{editName}}" bindinput="onEditInput" maxlength="20" />
+    <view class="modal-actions">
+      <view class="modal-btn-cancel" bindtap="onCancelEdit">取消</view>
+      <view class="modal-btn-confirm" bindtap="onConfirmEdit" loading="{{saving}}">确定</view>
+    </view>
+  </view>
+</view>

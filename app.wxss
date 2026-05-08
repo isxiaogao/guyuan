@@ -1,26 +1,235 @@
 page {
-  background-color: #f8f8f8;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #fafaf8;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
   font-size: 28rpx;
-  color: #333;
+  color: #2c2c2c;
   box-sizing: border-box;
 }
 
-/* 通用滚动条隐藏 */
 ::-webkit-scrollbar {
   width: 0;
   height: 0;
   background: transparent;
 }
 
-/* 通用间距 */
 .container {
   padding: 0 24rpx;
 }
 
-/* 文本省略 */
 .text-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ====== 轮播图 ====== */
+.banner-swiper {
+  width: 100%;
+  height: 460rpx;
+}
+.banner-item {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.banner-image {
+  width: 100%;
+  height: 100%;
+}
+.banner-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40rpx 32rpx 28rpx;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.45), transparent);
+}
+.banner-title {
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+
+/* ====== 通用区块 ====== */
+.section {
+  padding: 40rpx 24rpx 0;
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 28rpx;
+}
+.section-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 0.5rpx;
+}
+.section-more {
+  font-size: 24rpx;
+  color: #999;
+  letter-spacing: 1rpx;
+}
+
+/* ====== 分类 ====== */
+.category-scroll {
+  width: 100%;
+  white-space: nowrap;
+  padding-bottom: 4rpx;
+}
+.category-list {
+  display: inline-flex;
+  gap: 0;
+}
+.category-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 136rpx;
+  padding: 0 12rpx;
+}
+.category-icon-wrapper {
+  width: 96rpx;
+  height: 96rpx;
+  background: #f2ede8;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14rpx;
+}
+.category-icon {
+  width: 52rpx;
+  height: 52rpx;
+}
+.category-name {
+  font-size: 24rpx;
+  color: #555;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* ====== 商品网格 ====== */
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  padding: 0 24rpx;
+}
+.product-card {
+  width: calc(50% - 8rpx);
+  background: #fff;
+  border-radius: 10rpx;
+  overflow: hidden;
+  border: 1rpx solid #eeece8;
+  box-sizing: border-box;
+}
+.product-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 340rpx;
+}
+.product-image {
+  width: 100%;
+  height: 100%;
+  background-color: #f4f2ef;
+}
+.product-tag {
+  position: absolute;
+  top: 14rpx;
+  left: 14rpx;
+  background: #b7472a;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 4rpx;
+  font-weight: 500;
+  letter-spacing: 0.5rpx;
+}
+.product-info {
+  padding: 18rpx 20rpx 22rpx;
+}
+.product-name {
+  font-size: 26rpx;
+  color: #2c2c2c;
+  display: block;
+  margin-bottom: 12rpx;
+  font-weight: 500;
+}
+.product-price {
+  display: flex;
+  align-items: baseline;
+}
+.price-current {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #b7472a;
+  letter-spacing: -0.5rpx;
+}
+.price-original {
+  font-size: 22rpx;
+  color: #b0b0b0;
+  text-decoration: line-through;
+  margin-left: 10rpx;
+}
+
+/* ====== 底部 ====== */
+.footer {
+  padding: 80rpx 0 48rpx;
+  text-align: center;
+}
+.footer-brand {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #b7472a;
+  margin-bottom: 10rpx;
+  padding: 20rpx;
+  letter-spacing: 2rpx;
+}
+.footer-text {
+  font-size: 22rpx;
+  color: #b0b0b0;
+  letter-spacing: 1rpx;
+}
+
+/* ====== 管理悬浮按钮 ====== */
+.float-buttons {
+  position: fixed;
+  bottom: 140rpx;
+  right: 32rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+  z-index: 100;
+}
+.float-btn {
+  width: 92rpx;
+  height: 92rpx;
+  background: #fff;
+  border-radius: 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.08);
+  border: 1rpx solid #eeece8;
+}
+.float-btn-main {
+  background: #b7472a;
+  box-shadow: 0 8rpx 24rpx rgba(183, 71, 42, 0.3);
+  border-color: transparent;
+}
+.float-btn-text {
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 1;
+  color: #b7472a;
+  letter-spacing: 1rpx;
+}
+.float-btn-main .float-btn-text {
+  color: #fff;
+  font-size: 44rpx;
+  margin-top: -4rpx;
 }
