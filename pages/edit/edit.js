@@ -3,6 +3,7 @@ const form = require('../../utils/product-form')
 
 Page({
   data: {
+    productId: null,
     name: '',
     price: '',
     originalPrice: '',
@@ -17,12 +18,45 @@ Page({
     categories: [],
     categoryIndex: -1,
     images: [],
-    submitting: false
+    submitting: false,
+    loading: true
   },
 
-  onLoad() {
-    form.loadCategories((data) => this.setData(data))
+  onLoad(options) {
+    this.setData({ productId: Number(options.id) })
+    form.loadCategories((data) => {
+      this.setData(data)
+      this.loadProduct()
+    })
     form.loadTags((data) => this.setData(data))
+  },
+
+  loadProduct() {
+    request(`/api/products/${this.data.productId}`).then((product) => {
+      const categories = this.data.categories
+      const catIdx = categories.findIndex((c) => c.id === product.category)
+      const tagOptions = this.data.tagOptions
+      const tagIdx = product.tag ? tagOptions.findIndex((t) => t === product.tag) : -1
+      const sizeIdx = product.size ? this.data.sizeOptions.findIndex((s) => s === product.size) : -1
+
+      this.setData({
+        name: product.name,
+        price: product.price,
+        originalPrice: product.originalPrice || '',
+        sizeIndex: sizeIdx,
+        tagIndex: tagIdx,
+        color: product.color || '',
+        fabric: product.fabric || '',
+        description: product.description || '',
+        categoryIndex: catIdx,
+        images: product.images || [],
+        loading: false
+      })
+    }).catch((err) => {
+      console.error('[edit] loadProduct failed', err)
+      wx.showToast({ title: '加载失败', icon: 'none' })
+      setTimeout(() => wx.navigateBack(), 1500)
+    })
   },
 
   onNameInput(e) { this.setData({ name: e.detail.value }) },
@@ -54,18 +88,23 @@ Page({
     this.setData({ submitting: true })
 
     form.submitProduct({
+      productId: this.data.productId,
       data: this.data,
       success: () => {
-        wx.showToast({ title: '提交成功', icon: 'success' })
+        wx.showToast({ title: '修改成功', icon: 'success' })
         setTimeout(() => wx.navigateBack(), 1500)
       },
       fail: (err) => {
-        console.error('[add] submit failed', err)
-        wx.showToast({ title: err.message || '提交失败', icon: 'none' })
+        console.error('[edit] submit failed', err)
+        wx.showToast({ title: err.message || '修改失败', icon: 'none' })
       },
       complete: () => {
         this.setData({ submitting: false })
       }
     })
+  },
+
+  onUnload() {
+    wx.hideLoading()
   }
 })

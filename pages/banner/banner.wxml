@@ -1,0 +1,36 @@
+<!-- 轮播图管理 -->
+<view class="page">
+  <!-- 添加表单 -->
+  <view class="add-section">
+    <view class="image-picker" bindtap="onChooseImage" wx:if="{{!tempImagePath}}">
+      <text class="picker-icon">+</text>
+      <text class="picker-text">选择图片</text>
+    </view>
+    <view class="image-preview-wrapper" wx:else>
+      <image class="image-preview" src="{{tempImagePath}}" mode="aspectFill" />
+      <view class="image-clear" catchtap="onClearImage">×</view>
+    </view>
+    <input class="title-input" placeholder="输入轮播图标题" value="{{title}}" bindinput="onTitleInput" maxlength="50" />
+    <view class="add-btn {{adding ? 'btn-disabled' : ''}}" bindtap="onAdd" disabled="{{adding}}">
+      {{adding ? '上传中...' : '添加'}}
+    </view>
+  </view>
+
+  <!-- 列表 -->
+  <view class="list-section" wx:if="{{banners.length > 0}}">
+    <text class="section-label">当前轮播图</text>
+    <view class="banner-item" wx:for="{{banners}}" wx:key="id">
+      <image class="banner-img" src="{{item.image}}" mode="aspectFill" />
+      <view class="banner-info">
+        <text class="banner-name">{{item.title}}</text>
+        <text class="banner-id">ID: {{item.id}}</text>
+      </view>
+      <view class="btn-del" catchtap="onDelete" data-id="{{item.id}}" data-title="{{item.title}}">删除</view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{!loading && banners.length === 0}}">
+    <text class="empty-text">暂无轮播图</text>
+  </view>
+</view>

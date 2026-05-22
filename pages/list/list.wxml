@@ -5,13 +5,13 @@
 </view>
 
 <!-- 分类标签 -->
-<scroll-view class="category-bar" scroll-x enhanced="{{true}}" show-scrollbar="{{false}}">
+<view class="category-bar">
   <view class="category-tags">
     <view class="tag-item {{currentCategory === item.id ? 'active' : ''}}" wx:for="{{categories}}" wx:key="id" bindtap="onCategoryTap" data-id="{{item.id}}">
       <text>{{item.name}}</text>
     </view>
   </view>
-</scroll-view>
+</view>
 
 <!-- 加载中 -->
 <view class="loading-wrap" wx:if="{{loading}}">
@@ -33,10 +33,10 @@
     </view>
     <view class="product-info">
       <text class="product-name text-ellipsis">{{item.name}}</text>
-      <view class="product-price-row">
+      <!-- <view class="product-price-row">
         <text class="price-current">¥{{item.price}}</text>
         <text class="price-original">¥{{item.originalPrice}}</text>
-      </view>
+      </view> -->
     </view>
   </view>
 </view>

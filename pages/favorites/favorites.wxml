@@ -1,0 +1,36 @@
+<view class="favorites-page">
+  <!-- 未登录提示 -->
+  <view class="empty-state" wx:if="{{!openid && !loading}}">
+    <text class="empty-icon">🔒</text>
+    <text class="empty-text">请先登录后查看</text>
+    <view class="btn-login" bindtap="onLoginTap" catchlongpress="onLoginLongPress">点击登录（长按刷新身份）</view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-wrap" wx:elif="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:elif="{{!favorites.length}}">
+    <text class="empty-icon">💔</text>
+    <text class="empty-text">暂无收藏</text>
+    <view class="btn-go" bindtap="onGoHome">去逛逛</view>
+  </view>
+
+  <!-- 列表 -->
+  <view class="product-list" wx:else>
+    <view class="product-card" wx:for="{{favorites}}" wx:key="id" bindtap="onProductTap" data-id="{{item.id}}">
+      <view class="product-image-wrapper">
+        <image class="product-image" src="{{item.image}}" mode="aspectFill" lazy-load="{{true}}" />
+        <view class="product-tag" wx:if="{{item.tag}}">{{item.tag}}</view>
+      </view>
+      <view class="product-info">
+        <text class="product-name text-ellipsis">{{item.name}}</text>
+        <view class="product-unfav" catchtap="onUnfavTap" data-id="{{item.id}}">
+          <text>移除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

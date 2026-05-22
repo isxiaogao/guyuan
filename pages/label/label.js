@@ -1,5 +1,6 @@
 const { generateTSPL } = require('../../utils/label')
 const { request } = require('../../utils/request')
+const { BASE_URL, ADMIN_TOKEN } = require('../../utils/request')
 
 const STORAGE_KEY = 'label_templates'
 const EL_TYPE_NAMES = { text: '文本', price: '价格', barcode: '条码', qrcode: '二维码', box: '边框', line: '分割线' }
@@ -7,6 +8,7 @@ const EL_TYPE_ICONS = { text: 'T', price: '¥', barcode: '║', qrcode: '▣', b
 
 Page({
   data: {
+    activeTab: 'print',
     view: 'list',
     templates: [],
     template: null,
@@ -36,14 +38,147 @@ Page({
     touchStartY: 0,
     touchElId: '',
     touchStartElX: 0,
-    touchStartElY: 0
+    touchStartElY: 0,
+    tags: [],
+    tagLoading: false,
+    showTagModal: false,
+    editingTag: false,
+    editingTagIndex: -1,
+    tagForm: { name: '', code: '', sort: 0 }
   },
 
   onLoad() {
     this.loadTemplates()
+    this.loadTags()
   },
 
-  // ========== 模板管理 ==========
+  onTabChange(e) {
+    this.setData({ activeTab: e.currentTarget.dataset.tab })
+  },
+
+  loadTags() {
+    this.setData({ tagLoading: true })
+    request('/api/tags').then((tags) => {
+      this.setData({ tags, tagLoading: false })
+    }).catch((err) => {
+      console.error('[label] loadTags failed', err)
+      this.setData({ tagLoading: false })
+    })
+  },
+
+  onShowAddTag() {
+    this.setData({
+      showTagModal: true,
+      editingTag: false,
+      editingTagIndex: -1,
+      tagForm: { name: '', code: '', sort: 0 }
+    })
+  },
+
+  onEditTag(e) {
+    const index = e.currentTarget.dataset.index
+    const tag = this.data.tags[index]
+    this.setData({
+      showTagModal: true,
+      editingTag: true,
+      editingTagIndex: index,
+      tagForm: { name: tag.name, code: tag.code, sort: tag.sort }
+    })
+  },
+
+  onTagFormInput(e) {
+    const field = e.currentTarget.dataset.field
+    const tagForm = { ...this.data.tagForm }
+    tagForm[field] = field === 'sort' ? (parseInt(e.detail.value) || 0) : e.detail.value
+    this.setData({ tagForm })
+  },
+
+  onCancelTag() {
+    this.setData({ showTagModal: false })
+  },
+
+  onSaveTag() {
+    const { tagForm, editingTag, editingTagIndex, tags } = this.data
+    if (!tagForm.name.trim()) { wx.showToast({ title: '名称不能为空', icon: 'none' }); return }
+    if (!tagForm.code.trim()) { wx.showToast({ title: '代码不能为空', icon: 'none' }); return }
+
+    const url = editingTag ? `/api/tags/${tags[editingTagIndex].id}` : '/api/tags'
+    const method = editingTag ? 'PUT' : 'POST'
+
+    wx.request({
+      url: `${BASE_URL}${url}`,
+      method,
+      header: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN },
+      data: tagForm,
+      success: (res) => {
+        if (res.data.code === 200) {
+          wx.showToast({ title: editingTag ? '更新成功' : '添加成功', icon: 'success' })
+          this.setData({ showTagModal: false })
+          this.loadTags()
+        } else {
+          wx.showToast({ title: res.data.message || '操作失败', icon: 'none' })
+        }
+      },
+      fail: (err) => {
+        console.error('[label] saveTag failed', err)
+        wx.showToast({ title: '网络错误', icon: 'none' })
+      }
+    })
+  },
+
+  onToggleTag(e) {
+    const index = e.currentTarget.dataset.index
+    const tag = this.data.tags[index]
+    const newEnabled = tag.enabled ? 0 : 1
+
+    wx.request({
+      url: `${BASE_URL}/api/tags/${tag.id}`,
+      method: 'PUT',
+      header: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN },
+      data: { enabled: newEnabled },
+      success: (res) => {
+        if (res.data.code === 200) {
+          wx.showToast({ title: newEnabled ? '已启用' : '已停用', icon: 'success' })
+          this.loadTags()
+        } else {
+          wx.showToast({ title: res.data.message || '操作失败', icon: 'none' })
+        }
+      },
+      fail: (err) => {
+        console.error('[label] toggleTag failed', err)
+        wx.showToast({ title: '网络错误', icon: 'none' })
+      }
+    })
+  },
+
+  onDeleteTag(e) {
+    const index = e.currentTarget.dataset.index
+    const tag = this.data.tags[index]
+    wx.showModal({
+      title: '确认删除',
+      content: `确定删除标签"${tag.name}"？`,
+      success: (res) => {
+        if (res.confirm) {
+          wx.request({
+            url: `${BASE_URL}/api/tags/${tag.id}`,
+            method: 'DELETE',
+            header: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN },
+            success: (r) => {
+              if (r.data.code === 200) {
+                wx.showToast({ title: '已删除', icon: 'success' })
+                this.loadTags()
+              } else {
+                wx.showToast({ title: r.data.message || '删除失败', icon: 'none' })
+              }
+            },
+            fail: () => {
+              wx.showToast({ title: '网络错误', icon: 'none' })
+            }
+          })
+        }
+      }
+    })
+  },
 
   loadTemplates() {
     const data = wx.getStorageSync(STORAGE_KEY) || []
@@ -52,7 +187,6 @@ Page({
 
   saveTemplates() {
     wx.setStorageSync(STORAGE_KEY, this.data.templates)
-    this.setData({ templates: this.data.templates })
   },
 
   onNewTemplate() {
@@ -130,8 +264,6 @@ Page({
     this.setData({ view: 'list' })
   },
 
-  // ========== 画布计算 ==========
-
   calcCanvas() {
     const sys = wx.getSystemInfoSync()
     const screenW = sys.windowWidth
@@ -148,8 +280,6 @@ Page({
     this.setData({ canvasW, canvasH })
   },
 
-  // ========== 元素操作 ==========
-
   elTypeIcon(type) {
     return EL_TYPE_ICONS[type] || '?'
   },
@@ -158,7 +288,7 @@ Page({
     const type = e.currentTarget.dataset.type
     const { template } = this.data
     const el = {
-      id: 'el_' + Date.now(),
+      id: `el_${Date.now()}`,
       type,
       content: type === 'text' ? '文本' : (type === 'price' ? '' : ''),
       variable: (type === 'price' || type === 'barcode') ? 'price' : '',
@@ -184,7 +314,7 @@ Page({
 
   onSelectElement(e) {
     const id = e.currentTarget.dataset.id
-    const el = this.data.template.elements.find(e => e.id === id)
+    const el = this.data.template.elements.find((item) => item.id === id)
     if (el) this.openElementEditor(el)
   },
 
@@ -198,7 +328,7 @@ Page({
       view: 'editElement',
       editingElId: el.id,
       elForm: { ...el, typeName: EL_TYPE_NAMES[el.type] },
-      elFormVariableIndex: vi >= 0 ? vi : 0,
+      elFormVariableIndex: fi >= 0 ? fi : 0,
       elFormFontSizeIndex: fi >= 0 ? fi : 0,
       elFormAlignIndex: ai >= 0 ? ai : 0
     })
@@ -206,13 +336,15 @@ Page({
 
   onDeleteElement(e) {
     const id = e.currentTarget.dataset.id
-    const elements = this.data.template.elements.filter(el => el.id !== id)
+    const elements = this.data.template.elements.filter((el) => el.id !== id)
     this.setData({ 'template.elements': elements })
   },
 
   onElInput(e) {
     const field = e.currentTarget.dataset.field
-    const val = ['x', 'y', 'width', 'height', 'borderWidth', 'lineHeight'].includes(field) ? parseFloat(e.detail.value) || 0 : e.detail.value
+    const val = ['x', 'y', 'width', 'height', 'borderWidth', 'lineHeight'].includes(field)
+      ? (parseFloat(e.detail.value) || 0)
+      : e.detail.value
     this.setData({ elForm: { ...this.data.elForm, [field]: val } })
   },
 
@@ -248,7 +380,7 @@ Page({
 
   onSaveElement() {
     const { elForm, editingElId, template } = this.data
-    const elements = template.elements.map(el => {
+    const elements = template.elements.map((el) => {
       if (el.id === editingElId) {
         return { ...el, ...elForm }
       }
@@ -261,15 +393,12 @@ Page({
     this.setData({ view: 'edit' })
   },
 
-  // ========== 触摸拖拽 ==========
-
   onTouchStart(e) {
     const id = e.currentTarget.dataset.id
-    const el = this.data.template.elements.find(e => e.id === id)
+    const el = this.data.template.elements.find((item) => item.id === id)
     if (!el) return
     const touch = e.touches[0]
-    const { template, canvasW } = this.data
-    const ratio = template.width / canvasW
+    const { canvasW } = this.data
 
     this.setData({
       touchElId: id,
@@ -291,7 +420,7 @@ Page({
     const newX = Math.max(0, Math.min(touchStartElX + dx, template.width - 5))
     const newY = Math.max(0, Math.min(touchStartElY + dy, template.height - 5))
 
-    const elements = template.elements.map(el => {
+    const elements = template.elements.map((el) => {
       if (el.id === touchElId) {
         return { ...el, x: Math.round(newX * 10) / 10, y: Math.round(newY * 10) / 10 }
       }
@@ -304,13 +433,11 @@ Page({
     this.setData({ touchElId: '' })
   },
 
-  // ========== 保存模板 ==========
-
   onSaveTemplate() {
     const { template, templates } = this.data
     if (!template.name.trim()) { wx.showToast({ title: '模板名称不能为空', icon: 'none' }); return }
 
-    const idx = templates.findIndex(t => t.id === template.id)
+    const idx = templates.findIndex((t) => t.id === template.id)
     if (idx >= 0) {
       templates[idx] = template
     } else {
@@ -321,8 +448,6 @@ Page({
     wx.showToast({ title: '已保存', icon: 'success' })
     this.setData({ view: 'list' })
   },
-
-  // ========== 打印 ==========
 
   onPrintTemplate(e) {
     const index = e ? e.currentTarget.dataset.index : 0
@@ -346,12 +471,14 @@ Page({
   },
 
   loadProducts() {
-    request('/api/products', { pageSize: 500 }).then(result => {
+    request('/api/products', { pageSize: 500 }).then((result) => {
       this.setData({
         products: result.list,
-        productNames: result.list.map(p => p.name)
+        productNames: result.list.map((p) => p.name)
       })
-    }).catch(() => {})
+    }).catch((err) => {
+      console.error('[label] loadProducts failed', err)
+    })
   },
 
   onProductChange(e) {
@@ -359,16 +486,12 @@ Page({
   },
 
   onCopyMinus() {
-    const copies = Math.max(1, this.data.printCopies - 1)
-    this.setData({ printCopies: copies })
+    this.setData({ printCopies: Math.max(1, this.data.printCopies - 1) })
   },
 
   onCopyPlus() {
-    const copies = Math.min(99, this.data.printCopies + 1)
-    this.setData({ printCopies: copies })
+    this.setData({ printCopies: Math.min(99, this.data.printCopies + 1) })
   },
-
-  // ========== 蓝牙打印 ==========
 
   onChoosePrinter() {
     wx.showToast({ title: '搜索打印机...', icon: 'loading', duration: 999999 })
@@ -376,17 +499,16 @@ Page({
   },
 
   startBluetoothSearch() {
-    const that = this
     wx.openBluetoothAdapter({
-      success() {
+      success: () => {
         wx.startBluetoothDevicesDiscovery({
           allowDuplicatesKey: false,
-          success() {
-            wx.onBluetoothDeviceFound(function (res) {
+          success: () => {
+            wx.onBluetoothDeviceFound((res) => {
               const devices = res.devices || []
               for (const d of devices) {
-                if (d.name && (d.name.includes('Gprinter') || d.name.includes('HPRT') || d.name.includes('Zebra') || d.name.includes('printer') || d.name.includes('Printer'))) {
-                  that.connectPrinter(d)
+                if (d.name && /gprinter|hprt|zebra|printer/i.test(d.name)) {
+                  this.connectPrinter(d)
                   return
                 }
               }
@@ -394,8 +516,9 @@ Page({
           }
         })
       },
-      fail(err) {
+      fail: (err) => {
         wx.hideToast()
+        console.error('[label] bluetooth adapter failed', err)
         wx.showModal({ title: '蓝牙未开启', content: '请开启手机蓝牙后重试', showCancel: false })
       }
     })
@@ -403,48 +526,46 @@ Page({
 
   connectPrinter(device) {
     wx.hideToast()
-    const that = this
-    wx.stopBluetoothDevicesDiscovery()
 
     wx.createBLEConnection({
       deviceId: device.deviceId,
       timeout: 10000,
-      success() {
-        that.setData({
+      success: () => {
+        wx.stopBluetoothDevicesDiscovery()
+        this.setData({
           printerName: device.name,
           printerDeviceId: device.deviceId,
           printerConnected: true
         })
         wx.showToast({ title: '已连接', icon: 'success' })
-        that.getPrinterServices()
+        this.getPrinterServices()
       },
-      fail() {
+      fail: (err) => {
+        console.error('[label] connect printer failed', err)
         wx.showToast({ title: '连接失败', icon: 'error' })
       }
     })
   },
 
   getPrinterServices() {
-    const that = this
     wx.getBLEDeviceServices({
       deviceId: this.data.printerDeviceId,
-      success(res) {
+      success: (res) => {
         for (const service of res.services) {
-          that.getPrinterCharacteristics(service.uuid)
+          this.getPrinterCharacteristics(service.uuid)
         }
       }
     })
   },
 
   getPrinterCharacteristics(serviceId) {
-    const that = this
     wx.getBLEDeviceCharacteristics({
       deviceId: this.data.printerDeviceId,
       serviceId,
-      success(res) {
+      success: (res) => {
         for (const char of res.characteristics) {
           if (char.properties.write || char.properties.writeNoResponse) {
-            that.setData({
+            this.setData({
               printerServiceId: serviceId,
               printerCharId: char.uuid
             })
@@ -458,7 +579,6 @@ Page({
   sendTSPL(text) {
     return new Promise((resolve, reject) => {
       const buffer = this.stringToBuffer(text)
-      // 分包发送，每包不超过 20 字节
       const chunkSize = 20
       let offset = 0
 
@@ -475,10 +595,10 @@ Page({
           serviceId: this.data.printerServiceId,
           characteristicId: this.data.printerCharId,
           value: chunk,
-          success() {
+          success: () => {
             setTimeout(sendNext, 50)
           },
-          fail(err) {
+          fail: (err) => {
             reject(err)
           }
         })
@@ -512,11 +632,11 @@ Page({
     const product = this.data.products[this.data.productIndex]
     const tspl = generateTSPL(this.data.template, product)
 
-    const that = this
     this.sendTSPL(tspl).then(() => {
       wx.hideLoading()
       wx.showToast({ title: '打印成功', icon: 'success' })
-    }).catch(() => {
+    }).catch((err) => {
+      console.error('[label] print failed', err)
       wx.hideLoading()
       wx.showToast({ title: '打印失败', icon: 'error' })
     })

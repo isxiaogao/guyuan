@@ -61,7 +61,7 @@
   <view class="modal-content" catchtap>
     <text class="modal-title">赞赏支持</text>
     <view class="qr-placeholder">
-      <text class="qr-hint">在此放置微信收款码</text>
+      <image style="width: 200px; height: 200px; background-color: #eeeeee;" mode="aspectFill" src="{{src}}"></image>
     </view>
     <view class="modal-close" bindtap="onCloseReward">关闭</view>
   </view>

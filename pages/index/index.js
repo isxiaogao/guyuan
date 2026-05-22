@@ -1,15 +1,21 @@
-const { request } = require('../../utils/request')
+const { request, BASE_URL, login } = require('../../utils/request')
 
 Page({
   data: {
     banners: [],
     categories: [],
     hotProducts: [],
-    newProducts: []
+    newProducts: [],
+    isAdmin: false
   },
 
   onLoad() {
+    this.setData({ isAdmin: wx.getStorageSync('isAdmin') || false })
     this.loadAll()
+  },
+
+  onShow() {
+    this.setData({ isAdmin: wx.getStorageSync('isAdmin') || false })
   },
 
   loadAll() {
@@ -18,29 +24,29 @@ Page({
       request('/api/categories'),
       request('/api/products/hot'),
       request('/api/products/new')
-    ]).then(function (result) {
-      var banners = result[0]
-      var categories = result[1]
-      var hotProducts = result[2]
-      var newProducts = result[3]
+    ]).then((result) => {
+      let banners = result[0] || []
+      if (banners.length) {
+        banners = banners.map((b) => {
+          if (b.image && b.image.startsWith('/')) b.image = BASE_URL + b.image
+          return b
+        })
+      }
+      const categories = (result[1] || []).filter((c) => c.name !== '全部')
+      const hotProducts = (result[2] || []).slice(0, 4)
+      const newProducts = (result[3] || []).slice(0, 4)
+
       this.setData({
-        banners: banners,
-        categories: categories.map(function (c) {
-            c.icon = '/images/menu_icon' + c.id + '.png'
-          return c
-        }),
-        hotProducts: hotProducts.slice(0, 4),
-        newProducts: newProducts.slice(0, 4)
+        banners,
+        categories: categories.map((c) => ({ ...c, icon: `/images/menu_icon${c.id}.png` })),
+        hotProducts,
+        newProducts
       })
-      console.log(categories)
-    }.bind(this)).catch(function () {
+    }).catch(() => {
       wx.showToast({ title: '加载失败', icon: 'none' })
     })
   },
 
-  getCategoryIcon(id) {
-    return '/images/menu_icon' + id + '.png'
-  },
   onCategoryTap(e) {
     const { id, name } = e.currentTarget.dataset
     wx.navigateTo({ url: `/pages/list/list?categoryId=${id}&categoryName=${name}` })
@@ -51,61 +57,48 @@ Page({
     wx.navigateTo({ url: `/pages/detail/detail?id=${id}` })
   },
 
-  checkAdmin(callback) {
-    if (wx.getStorageSync('isAdmin')) {
-      return callback()
-    }
-    wx.showModal({
-      title: '管理员验证',
-      editable: true,
-      placeholderText: '请输入管理密码',
-      confirmText: '验证',
-      success: function (res) {
-        if (res.confirm && res.content === 'guyuan2024') {
-          wx.setStorageSync('isAdmin', true)
-          callback()
-        } else if (res.confirm) {
-          wx.showToast({ title: '密码错误', icon: 'error' })
+  onAddTap() {
+    wx.navigateTo({ url: '/pages/add/add' })
+  },
+
+  onBannerTap() {
+    wx.navigateTo({ url: '/pages/banner/banner' })
+  },
+
+  onCategoryManageTap() {
+    wx.navigateTo({ url: '/pages/category/category' })
+  },
+
+  onLabelTap() {
+    wx.navigateTo({ url: '/pages/label/label' })
+  },
+
+  onAdminLongPress() {
+    wx.showActionSheet({
+      itemList: ['商品录入', '分类管理', '轮播图管理', '标签打印', '刷新身份'],
+      success: (r) => {
+        const actions = [
+          '/pages/add/add',
+          '/pages/category/category',
+          '/pages/banner/banner',
+          null, // 刷新身份
+          '/pages/label/label'
+        ]
+        if (r.tapIndex === 3) {
+          login(true).then(() => {
+            this.setData({ isAdmin: wx.getStorageSync('isAdmin') || false })
+            wx.showToast({ title: '已刷新', icon: 'success' })
+          }).catch(() => {
+            wx.showToast({ title: '刷新失败', icon: 'none' })
+          })
+        } else if (actions[r.tapIndex]) {
+          wx.navigateTo({ url: actions[r.tapIndex] })
         }
       }
     })
   },
 
-  onAddTap() {
-    var self = this
-    this.checkAdmin(function () {
-      wx.navigateTo({ url: '/pages/add/add' })
-    })
-  },
-
-  onCategoryManageTap() {
-    var self = this
-    this.checkAdmin(function () {
-      wx.navigateTo({ url: '/pages/category/category' })
-    })
-  },
-
-  onLabelTap() {
-    this.checkAdmin(function () {
-      wx.navigateTo({ url: '/pages/label/label' })
-    })
-  },
-
-  onAdminLongPress() {
-    var self = this
-    this.checkAdmin(function () {
-      wx.showActionSheet({
-        itemList: ['商品录入', '分类管理', '标签打印'],
-        success: function (r) {
-          if (r.tapIndex === 0) {
-            wx.navigateTo({ url: '/pages/add/add' })
-          } else if (r.tapIndex === 1) {
-            wx.navigateTo({ url: '/pages/category/category' })
-          } else {
-            wx.navigateTo({ url: '/pages/label/label' })
-          }
-        }
-      })
-    })
+  onFavoritesTap() {
+    wx.navigateTo({ url: '/pages/favorites/favorites' })
   }
 })

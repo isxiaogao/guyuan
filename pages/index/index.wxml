@@ -15,16 +15,14 @@
   <view class="section-header">
     <text class="section-title">品类精选</text>
   </view>
-  <scroll-view class="category-scroll" scroll-x enhanced="{{true}}" show-scrollbar="{{false}}">
-    <view class="category-list">
-      <view class="category-item" wx:for="{{categories}}" wx:key="id" bindtap="onCategoryTap" data-id="{{item.id}}" data-name="{{item.name}}">
-        <view class="category-icon-wrapper">
-          <image class="category-icon" src="{{item.icon}}" mode="aspectFit" />
-        </view>
-        <text class="category-name">{{item.name}}</text>
+  <view class="category-list">
+    <view class="category-item" wx:for="{{categories}}" wx:key="id" bindtap="onCategoryTap" data-id="{{item.id}}" data-name="{{item.name}}">
+      <view class="category-icon-wrapper">
+        <image class="category-icon" src="{{item.icon}}" mode="aspectFit" />
       </view>
+      <text class="category-name">{{item.name}}</text>
     </view>
-  </scroll-view>
+  </view>
 </view>
 
 <!-- 热销商品 -->
@@ -41,10 +39,10 @@
       </view>
       <view class="product-info">
         <text class="product-name text-ellipsis">{{item.name}}</text>
-        <view class="product-price">
+        <!-- <view class="product-price">
           <text class="price-current">¥{{item.price}}</text>
           <text class="price-original">¥{{item.originalPrice}}</text>
-        </view>
+        </view> -->
       </view>
     </view>
   </view>
@@ -63,10 +61,10 @@
       </view>
       <view class="product-info">
         <text class="product-name text-ellipsis">{{item.name}}</text>
-        <view class="product-price">
+        <!-- <view class="product-price">
           <text class="price-current">¥{{item.price}}</text>
           <text class="price-original">¥{{item.originalPrice}}</text>
-        </view>
+        </view> -->
       </view>
     </view>
   </view>
@@ -78,8 +76,11 @@
   <text class="footer-text">用心搭配 · 只为更美的你</text>
 </view>
 
-<!-- 管理入口悬浮按钮 -->
-<view class="float-buttons">
+<!-- 管理入口悬浮按钮（仅管理员可见） -->
+<view class="float-buttons" wx:if="{{isAdmin}}">
+  <view class="float-btn" bindtap="onBannerTap">
+    <view class="float-btn-text">轮播</view>
+  </view>
   <view class="float-btn" bindtap="onCategoryManageTap">
     <view class="float-btn-text">分类</view>
   </view>
@@ -89,4 +90,9 @@
   <view class="float-btn float-btn-main" bindtap="onAddTap">
     <view class="float-btn-text">+</view>
   </view>
+</view>
+
+<!-- 收藏入口 -->
+<view class="favorites-entry" bindtap="onFavoritesTap">
+  <text class="favorites-entry-text">我的收藏</text>
 </view>

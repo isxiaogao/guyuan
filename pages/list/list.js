@@ -1,6 +1,6 @@
 const { request } = require('../../utils/request')
 
-var searchTimer = null
+let searchTimer = null
 
 Page({
   data: {
@@ -15,7 +15,7 @@ Page({
   },
 
   onLoad(options) {
-    const categoryId = Number(options.categoryId) == 1 ? -1 : Number(options.categoryId)
+    const categoryId = options.categoryId !== undefined && Number(options.categoryId) !== 0 ? Number(options.categoryId) : -1
     const categoryName = options.categoryName || '全部'
     this.setData({ categoryId, categoryName, currentCategory: categoryId })
     this.loadCategories()
@@ -23,33 +23,34 @@ Page({
   },
 
   loadCategories() {
-    request('/api/categories').then(function (categories) {
-      var filtered = categories.filter(function (c) { return c.name !== '全部' })
-      var allCat = [{ id: -1, name: '全部' }]
+    request('/api/categories').then((categories) => {
+      const filtered = categories.filter((c) => c.name !== '全部')
+      const allCat = [{ id: -1, name: '全部' }]
       this.setData({ categories: allCat.concat(filtered) })
-    }.bind(this)).catch(function () {
-      // 静默失败
+    }).catch((err) => {
+      console.error('[list] loadCategories failed', err)
     })
   },
 
   loadProducts() {
     this.setData({ loading: true, empty: false })
-    var params = {}
+    const params = {}
     if (this.data.currentCategory >= 0) {
       params.category = this.data.currentCategory
     }
     if (this.data.searchKeyword) {
       params.keyword = this.data.searchKeyword
     }
-    request('/api/products', params).then(function (result) {
+    request('/api/products', params).then((result) => {
       this.setData({
         products: result.list,
         loading: false,
         empty: result.total === 0
       })
-    }.bind(this)).catch(function () {
+    }).catch((err) => {
+      console.error('[list] loadProducts failed', err)
       this.setData({ products: [], loading: false, empty: true })
-    }.bind(this))
+    })
   },
 
   onCategoryTap(e) {
@@ -69,7 +70,7 @@ Page({
   },
 
   onSearchInput(e) {
-    var keyword = e.detail.value.trim()
+    const keyword = e.detail.value.trim()
     this.setData({ searchKeyword: keyword })
 
     if (searchTimer) clearTimeout(searchTimer)
@@ -79,14 +80,14 @@ Page({
       return
     }
 
-    searchTimer = setTimeout(function () {
+    searchTimer = setTimeout(() => {
       this.setData({ currentCategory: -1 })
       this.loadProducts()
-    }.bind(this), 500)
+    }, 500)
   },
 
   onSearchConfirm(e) {
-    var keyword = e.detail.value.trim()
+    const keyword = e.detail.value.trim()
     if (searchTimer) clearTimeout(searchTimer)
     this.setData({ searchKeyword: keyword, currentCategory: -1 })
     this.loadProducts()
@@ -96,5 +97,12 @@ Page({
     if (searchTimer) clearTimeout(searchTimer)
     this.setData({ searchKeyword: '', currentCategory: -1 })
     this.loadProducts()
+  },
+
+  onUnload() {
+    if (searchTimer) {
+      clearTimeout(searchTimer)
+      searchTimer = null
+    }
   }
 })

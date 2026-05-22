@@ -1,0 +1,13 @@
+@import '../add/add.wxss';
+
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 300rpx 0;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
+}

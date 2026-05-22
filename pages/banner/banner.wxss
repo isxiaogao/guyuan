@@ -1,0 +1,170 @@
+.page {
+  padding: 24rpx;
+  background: #fafaf8;
+  min-height: 100vh;
+}
+
+/* 添加区 */
+.add-section {
+  background: #fff;
+  border-radius: 10rpx;
+  padding: 28rpx 24rpx;
+  margin-bottom: 32rpx;
+  border: 1rpx solid #eeece8;
+}
+
+.image-picker {
+  width: 100%;
+  height: 300rpx;
+  background: #f5f2ee;
+  border-radius: 8rpx;
+  border: 2rpx dashed #d4cfc8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+
+.picker-icon {
+  font-size: 72rpx;
+  color: #d4cfc8;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.picker-text {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 12rpx;
+}
+
+.image-preview-wrapper {
+  position: relative;
+  width: 100%;
+  height: 300rpx;
+  margin-bottom: 20rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.image-clear {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 56rpx;
+  height: 56rpx;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  line-height: 1;
+}
+
+.title-input {
+  width: 100%;
+  height: 72rpx;
+  background: #f5f2ee;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  margin-bottom: 20rpx;
+}
+
+.add-btn {
+  width: 100%;
+  text-align: center;
+  padding: 20rpx 0;
+  border-radius: 10rpx;
+  background: #b7472a;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.btn-disabled {
+  background: #d4a08a;
+}
+
+/* 列表区 */
+.list-section {
+  margin-top: 16rpx;
+}
+
+.section-label {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 16rpx;
+}
+
+.banner-item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+  border: 1rpx solid #eeece8;
+}
+
+.banner-img {
+  width: 120rpx;
+  height: 80rpx;
+  border-radius: 6rpx;
+  flex-shrink: 0;
+}
+
+.banner-info {
+  flex: 1;
+  margin-left: 20rpx;
+  min-width: 0;
+}
+
+.banner-name {
+  display: block;
+  font-size: 28rpx;
+  color: #2c2c2c;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.banner-id {
+  display: block;
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 4rpx;
+}
+
+.btn-del {
+  padding: 12rpx 24rpx;
+  border-radius: 8rpx;
+  background: #fde8e8;
+  color: #c0392b;
+  font-size: 24rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* 空状态 */
+.empty {
+  text-align: center;
+  padding: 120rpx 0;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999;
+}

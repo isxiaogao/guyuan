@@ -3,10 +3,13 @@
     "pages/index/index",
     "pages/list/list",
     "pages/detail/detail",
+    "pages/edit/edit",
     "pages/add/add",
     "pages/category/category",
     "pages/about/about",
-    "pages/label/label"
+    "pages/label/label",
+    "pages/banner/banner",
+    "pages/favorites/favorites"
   ],
   "tabBar": {
     "color": "#999999",

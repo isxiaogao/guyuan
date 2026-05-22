@@ -1,12 +1,13 @@
 Page({
   data: {
-    showReward: false
+    showReward: false,
+    src:'https://guyuan.allyd.cn/uploads/20260521_160344_upload_567284.png'
   },
 
   onCopyWechat() {
     wx.setClipboardData({
       data: 'guyuan-design',
-      success: function () {
+      success: () => {
         wx.showToast({ title: '已复制微信号', icon: 'success' })
       }
     })

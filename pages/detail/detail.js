@@ -1,4 +1,4 @@
-const { request } = require('../../utils/request')
+const { request, login } = require('../../utils/request')
 
 Page({
   data: {
@@ -6,29 +6,50 @@ Page({
     currentImage: 0,
     images: [],
     loading: true,
-    isFav: false
+    isFav: false,
+    isAdmin: false
   },
 
   onLoad(options) {
-    request(`/api/products/${options.id}`).then(function (product) {
-      const discount = product.originalPrice && product.price < product.originalPrice
-        ? (product.price / product.originalPrice * 10).toFixed(1).replace(/\.0$/, '')
-        : ''
-
-      const favs = wx.getStorageSync('favorites') || []
-      const isFav = favs.indexOf(Number(options.id)) !== -1
-
+    this.setData({ isAdmin: wx.getStorageSync('isAdmin') || false })
+    request(`/api/products/${options.id}`).then((product) => {
       this.setData({
-        product: { ...product, discount },
+        product,
         images: product.images,
-        loading: false,
-        isFav: isFav
+        loading: false
       })
-
       wx.setNavigationBarTitle({ title: product.name })
-    }.bind(this)).catch(function () {
+      this.checkFavStatus(product.id)
+    }).catch((err) => {
+      console.error('[detail] load product failed', err)
       wx.showToast({ title: '商品不存在', icon: 'none' })
       setTimeout(() => wx.navigateBack(), 1500)
+    })
+  },
+
+  onShow() {
+    this.setData({ isAdmin: wx.getStorageSync('isAdmin') || false })
+  },
+
+  checkFavStatus(productId) {
+    const openid = wx.getStorageSync('openid')
+    if (!openid) {
+      login().then(() => {
+        this.loadFavStatus(productId)
+      }).catch((err) => {
+        console.error('[detail] login for fav status failed', err)
+      })
+    } else {
+      this.loadFavStatus(productId)
+    }
+  },
+
+  loadFavStatus(productId) {
+    request('/api/favorites').then((list) => {
+      const isFav = list.some((item) => item.id === productId)
+      this.setData({ isFav })
+    }).catch((err) => {
+      console.error('[detail] loadFavStatus failed', err)
     })
   },
 
@@ -50,19 +71,32 @@ Page({
 
   onFavorite() {
     const id = this.data.product.id
-    const favs = wx.getStorageSync('favorites') || []
-    let isFav = this.data.isFav
-    if (isFav) {
-      const idx = favs.indexOf(id)
-      if (idx !== -1) favs.splice(idx, 1)
-      isFav = false
-      wx.showToast({ title: '已取消收藏', icon: 'none' })
+    if (this.data.isFav) {
+      this.removeFav(id)
     } else {
-      favs.push(id)
-      isFav = true
-      wx.showToast({ title: '已收藏', icon: 'success' })
+      this.addFav(id)
     }
-    wx.setStorageSync('favorites', favs)
-    this.setData({ isFav: isFav })
+  },
+
+  addFav(id) {
+    request('/api/favorites', { product_id: id }, 'POST').then(() => {
+      this.setData({ isFav: true })
+      wx.showToast({ title: '已收藏', icon: 'success' })
+    }).catch((err) => {
+      wx.showToast({ title: err.message || '收藏失败', icon: 'none' })
+    })
+  },
+
+  removeFav(id) {
+    request('/api/favorites', { product_id: id }, 'DELETE').then(() => {
+      this.setData({ isFav: false })
+      wx.showToast({ title: '已取消收藏', icon: 'none' })
+    }).catch((err) => {
+      wx.showToast({ title: err.message || '操作失败', icon: 'none' })
+    })
+  },
+
+  onEditTap() {
+    wx.navigateTo({ url: `/pages/edit/edit?id=${this.data.product.id}` })
   }
 })

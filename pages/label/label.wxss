@@ -442,3 +442,171 @@
   background: #1a1a1a;
   color: #fff;
 }
+
+/* ====== Tab 栏 ====== */
+.tab-bar {
+  display: flex;
+  background: #fff;
+  padding: 20rpx 24rpx 0;
+  border-bottom: 1rpx solid #eeece8;
+}
+.tab-item {
+  flex: 1;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #999;
+  padding: 16rpx 0;
+  position: relative;
+}
+.tab-active {
+  color: #b7472a;
+}
+.tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 4rpx;
+  background: #b7472a;
+  border-radius: 2rpx;
+}
+
+/* ====== 标签字典 ====== */
+.tags-page {
+  min-height: calc(100vh - 100rpx);
+  background: #fafaf8;
+}
+
+.tag-list {
+  padding: 24rpx;
+}
+.tag-card {
+  background: #fff;
+  border-radius: 10rpx;
+  padding: 28rpx 24rpx;
+  margin-bottom: 20rpx;
+  border: 1rpx solid #eeece8;
+}
+.tag-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.tag-badge {
+  display: inline-block;
+  padding: 10rpx 24rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #fff;
+}
+.tag-card-meta {
+  display: flex;
+  gap: 16rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+.tag-card-actions {
+  display: flex;
+  gap: 16rpx;
+}
+.tag-btn {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+.tag-btn-edit {
+  background: #f5f2ee;
+  color: #2c2c2c;
+}
+.tag-btn-toggle {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.tag-btn-delete {
+  background: #fde8e8;
+  color: #c0392b;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 80rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}
+
+/* ====== 弹窗 ====== */
+.tag-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+}
+.tag-modal-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+.tag-modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 40rpx 32rpx 32rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.15);
+}
+.tag-modal-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 32rpx;
+  text-align: center;
+}
+.tag-modal-item {
+  margin-bottom: 24rpx;
+}
+.tag-modal-label {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #2c2c2c;
+  margin-bottom: 12rpx;
+}
+.tag-modal-input {
+  width: 100%;
+  height: 72rpx;
+  background: #f5f2ee;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+.tag-modal-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 32rpx;
+}
+.tag-modal-btn {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx 0;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  background: #f5f2ee;
+  color: #666;
+}
+.tag-modal-btn-primary {
+  background: #b7472a;
+  color: #fff;
+}

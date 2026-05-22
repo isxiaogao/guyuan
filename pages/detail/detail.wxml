@@ -6,8 +6,8 @@
 </swiper>
 
 <view class="detail-content" wx:if="{{product}}">
-  <!-- 价格信息 -->
-  <view class="price-section">
+  <!-- 价格信息 (审核时隐藏) -->
+  <!-- <view class="price-section">
     <view class="price-row">
       <text class="price-big">¥{{product.price}}</text>
       <text class="price-original">¥{{product.originalPrice}}</text>
@@ -15,7 +15,7 @@
         <text>{{product.discount}}折</text>
       </view>
     </view>
-  </view>
+  </view> -->
 
   <!-- 商品名称 -->
   <view class="title-section">
@@ -50,8 +50,11 @@
   <view class="bottom-placeholder"></view>
 </view>
 
-<!-- 底部联系作者 -->
+<!-- 底部操作栏 -->
 <view class="bottom-bar">
+  <view class="bar-btn bar-btn-edit" wx:if="{{isAdmin}}" bindtap="onEditTap">
+    <text class="bar-btn-text">编辑</text>
+  </view>
   <view class="bar-btn bar-btn-contact" bindtap="onContactAuthor">
     <text class="bar-btn-text">联系作者</text>
   </view>

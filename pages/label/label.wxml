@@ -1,5 +1,14 @@
 <wxs src="./label.wxs" module="util" />
 
+<!-- 顶部 Tab -->
+<view class="tab-bar">
+  <view class="tab-item {{activeTab === 'print' ? 'tab-active' : ''}}" bindtap="onTabChange" data-tab="print">打印模板</view>
+  <view class="tab-item {{activeTab === 'tags' ? 'tab-active' : ''}}" bindtap="onTabChange" data-tab="tags">标签字典</view>
+</view>
+
+<!-- ==================== 打印模板 ==================== -->
+<view wx:if="{{activeTab === 'print'}}">
+
 <!-- 模板列表 -->
 <view class="page" wx:if="{{view === 'list'}}">
   <view class="page-header">
@@ -271,4 +280,68 @@
     <view class="form-btn form-btn-cancel" bindtap="onBackToEdit">返回</view>
     <view class="form-btn form-btn-confirm" bindtap="onDoPrint" disabled="{{!printerConnected || productIndex < 0}}">打印</view>
   </view>
+</view>
+
+</view><!-- end print tab -->
+
+<!-- ==================== 标签字典管理 ==================== -->
+<view wx:if="{{activeTab === 'tags'}}" class="tags-page">
+
+  <!-- 标签列表 -->
+  <view class="page-header">
+    <text class="page-title">标签字典</text>
+    <view class="btn-new" bindtap="onShowAddTag">+ 新建</view>
+  </view>
+
+  <view class="empty-state" wx:if="{{tags.length === 0 && !tagLoading}}">
+    <text class="empty-icon">🏷</text>
+    <text class="empty-text">暂无标签</text>
+    <text class="empty-hint">点击"新建"添加商品标签</text>
+  </view>
+
+  <view class="tag-list" wx:else>
+    <view class="tag-card" wx:for="{{tags}}" wx:key="id">
+      <view class="tag-card-header">
+        <view class="tag-badge" style="background: #{{item.enabled ? 'b7472a' : 'ccc'}};">{{item.name}}</view>
+        <view class="tag-card-meta">
+          <text>code: {{item.code}}</text>
+          <text>排序: {{item.sort}}</text>
+        </view>
+      </view>
+      <view class="tag-card-actions">
+        <view class="tag-btn tag-btn-edit" catchtap="onEditTag" data-index="{{index}}">编辑</view>
+        <view class="tag-btn tag-btn-toggle" catchtap="onToggleTag" data-index="{{index}}">{{item.enabled ? '停用' : '启用'}}</view>
+        <view class="tag-btn tag-btn-delete" catchtap="onDeleteTag" data-index="{{index}}">删除</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="loading-state" wx:if="{{tagLoading}}">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 新建/编辑标签弹窗 -->
+  <view class="tag-modal" wx:if="{{showTagModal}}">
+    <view class="tag-modal-mask" catchtap="onCancelTag"></view>
+    <view class="tag-modal-content">
+      <text class="tag-modal-title">{{editingTag ? '编辑标签' : '新建标签'}}</text>
+      <view class="tag-modal-item">
+        <text class="tag-modal-label">显示名称</text>
+        <input class="tag-modal-input" placeholder="如：热卖" value="{{tagForm.name}}" bindinput="onTagFormInput" data-field="name" />
+      </view>
+      <view class="tag-modal-item">
+        <text class="tag-modal-label">标签代码</text>
+        <input class="tag-modal-input" placeholder="如：hot（同一code可对应多个name）" value="{{tagForm.code}}" bindinput="onTagFormInput" data-field="code" />
+      </view>
+      <view class="tag-modal-item">
+        <text class="tag-modal-label">排序</text>
+        <input class="tag-modal-input" type="number" placeholder="0" value="{{tagForm.sort}}" bindinput="onTagFormInput" data-field="sort" />
+      </view>
+      <view class="tag-modal-actions">
+        <view class="tag-modal-btn" bindtap="onCancelTag">取消</view>
+        <view class="tag-modal-btn tag-modal-btn-primary" bindtap="onSaveTag">保存</view>
+      </view>
+    </view>
+  </view>
+
 </view>

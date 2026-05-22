@@ -121,6 +121,9 @@
   border-radius: 10rpx;
   margin: 0 8rpx;
 }
+.bar-btn-edit {
+  background: #f5f2ee;
+}
 .bar-btn-contact {
   background: #f5f2ee;
 }
@@ -132,6 +135,7 @@
   font-weight: 600;
   color: #fff;
 }
+.bar-btn-edit .bar-btn-text,
 .bar-btn-contact .bar-btn-text {
   color: #b7472a;
 }
