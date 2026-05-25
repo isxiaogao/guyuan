@@ -1,9 +1,23 @@
+/* ====== Vant 主题色覆盖 ====== */
 page {
+  --van-primary-color: #b7472a;
+  --van-primary-color-dark: #9a3d23;
+  --van-primary-color-active: #8a351f;
+  --van-border-color: #eeece8;
+  --van-cell-background: #fff;
+  --van-field-input-color: #2c2c2c;
+  --van-field-label-width: 5.2em;
+  --van-checkbox-checked-icon-color: #b7472a;
+  --checkbox-size: 36rpx;
+  --checkbox-label-color: #2c2c2c;
+  --van-uploader-icon-color: #d4cfc8;
   background-color: #fafaf8;
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
   font-size: 28rpx;
   color: #2c2c2c;
   box-sizing: border-box;
+  overflow-y: auto;
+  height: 100%;
 }
 
 ::-webkit-scrollbar {

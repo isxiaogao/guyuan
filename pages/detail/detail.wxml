@@ -1,22 +1,41 @@
-<!-- 商品图片轮播 -->
-<swiper class="detail-swiper" indicator-dots="{{images.length > 1}}" indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff" bindchange="onImageChange" circular="{{true}}">
-  <swiper-item wx:for="{{images}}" wx:key="*this">
-    <image class="detail-image" src="{{item}}" mode="aspectFill" bindtap="onPreviewImage" data-index="{{index}}" />
+<!-- 混合媒体轮播：图片 + 视频 -->
+<swiper
+  class="detail-swiper"
+  indicator-dots="{{mediaList.length > 1}}"
+  indicator-color="rgba(255,255,255,0.5)"
+  indicator-active-color="#fff"
+  bindchange="onSwiperChange"
+  circular="{{true}}"
+>
+  <swiper-item wx:for="{{mediaList}}" wx:key="index">
+    <!-- 图片 -->
+    <image
+      wx:if="{{item.type === 'image'}}"
+      class="detail-image"
+      src="{{item.url}}"
+      mode="aspectFill"
+      bindtap="onPreviewImage"
+      data-index="{{index}}"
+    />
+    <!-- 视频 -->
+    <view wx:else class="detail-video-wrap">
+      <video
+        class="detail-video"
+        id="detailVideo"
+        src="{{item.url}}"
+        autoplay="{{currentMediaIndex === index}}"
+        controls="{{true}}"
+        object-fit="cover"
+        show-center-play-btn="{{true}}"
+        show-play-btn="{{true}}"
+        enable-progress-gesture="{{true}}"
+        bindfullscreenchange="onVideoFullScreenChange"
+      />
+    </view>
   </swiper-item>
 </swiper>
 
 <view class="detail-content" wx:if="{{product}}">
-  <!-- 价格信息 (审核时隐藏) -->
-  <!-- <view class="price-section">
-    <view class="price-row">
-      <text class="price-big">¥{{product.price}}</text>
-      <text class="price-original">¥{{product.originalPrice}}</text>
-      <view class="discount-tag" wx:if="{{product.discount}}">
-        <text>{{product.discount}}折</text>
-      </view>
-    </view>
-  </view> -->
-
   <!-- 商品名称 -->
   <view class="title-section">
     <text class="product-title">{{product.name}}</text>
@@ -52,12 +71,15 @@
 
 <!-- 底部操作栏 -->
 <view class="bottom-bar">
+  <view class="bar-btn bar-btn-delete" wx:if="{{isAdmin}}" bindtap="onDeleteTap">
+    <text class="bar-btn-text">删除</text>
+  </view>
   <view class="bar-btn bar-btn-edit" wx:if="{{isAdmin}}" bindtap="onEditTap">
     <text class="bar-btn-text">编辑</text>
   </view>
-  <view class="bar-btn bar-btn-contact" bindtap="onContactAuthor">
-    <text class="bar-btn-text">联系作者</text>
-  </view>
+  <button class="bar-btn bar-btn-share" open-type="share">
+    <text class="bar-btn-text">分享</text>
+  </button>
   <view class="bar-btn bar-btn-fav" bindtap="onFavorite">
     <text class="bar-btn-text">{{isFav ? '已收藏' : '收藏'}}</text>
   </view>

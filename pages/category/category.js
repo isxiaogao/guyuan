@@ -1,4 +1,5 @@
 const { request, BASE_URL } = require('../../utils/request')
+const ADMIN_TOKEN = 'guyuan-admin-token'
 
 Page({
   data: {
@@ -36,11 +37,12 @@ Page({
     }
 
     this.setData({ adding: true })
+    const openid = wx.getStorageSync('openid')
     wx.request({
       url: BASE_URL + '/api/categories',
       method: 'POST',
-      header: { 'Content-Type': 'application/json' },
-      data: { name },
+      header: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN, 'x-user-openid': openid },
+      data: { name, openid },
       success: (res) => {
         if (res.data.code === 200) {
           wx.showToast({ title: '添加成功', icon: 'success' })
@@ -80,11 +82,12 @@ Page({
     }
 
     this.setData({ saving: true })
+    const openid = wx.getStorageSync('openid')
     wx.request({
       url: BASE_URL + '/api/categories/' + this.data.editId,
       method: 'PUT',
-      header: { 'Content-Type': 'application/json' },
-      data: { name },
+      header: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN, 'x-user-openid': openid },
+      data: { name, openid },
       success: (res) => {
         if (res.data.code === 200) {
           wx.showToast({ title: '更新成功', icon: 'success' })
@@ -110,9 +113,12 @@ Page({
       content: `删除分类「${name}」？如有商品引用此分类将无法删除`,
       success: (res) => {
         if (res.confirm) {
+          const openid = wx.getStorageSync('openid')
           wx.request({
             url: BASE_URL + '/api/categories/' + id,
             method: 'DELETE',
+            header: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN, 'x-user-openid': openid },
+            data: { openid },
             success: (res) => {
               if (res.data.code === 200) {
                 wx.showToast({ title: '删除成功', icon: 'success' })

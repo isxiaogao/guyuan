@@ -1,91 +1,119 @@
-<!-- 商品录入页面 -->
-<view class="add-page">
-  <view class="form-section">
+<wxs src="../utils.wxs" module="utils" />
+<!-- 商品录入/编辑页面 -->
+<view class="add-page" wx:if="{{!loading}}">
+  <!-- 必填项 -->
+  <view class="form-group">
     <!-- 名称 -->
     <view class="form-item">
-      <text class="label">商品名称</text>
-      <input class="input" placeholder="请输入商品名称" value="{{name}}" bindinput="onNameInput" maxlength="100" />
-    </view>
-
-    <!-- 价格 -->
-    <view class="form-row">
-      <view class="form-item half">
-        <text class="label">售价（元）</text>
-        <input class="input" type="digit" placeholder="0.00" value="{{price}}" bindinput="onPriceInput" />
-      </view>
-      <view class="form-item half">
-        <text class="label">原价（元）</text>
-        <input class="input" type="digit" placeholder="0.00" value="{{originalPrice}}" bindinput="onOriginalPriceInput" />
-      </view>
+      <view class="form-label"><text class="required">*</text>商品名称</view>
+      <input class="form-input" placeholder="请输入商品名称" maxlength="100" value="{{name}}" bindinput="onNameInput" />
     </view>
 
     <!-- 衣服类型 -->
-    <view class="form-item">
-      <text class="label">衣服类型</text>
-      <picker class="picker" range="{{categoryNames}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
-        <view class="picker-value {{categoryIndex >= 0 ? '' : 'placeholder'}}">
-          {{categoryIndex >= 0 ? categoryNames[categoryIndex] : '请选择类型'}}
-        </view>
-      </picker>
+    <view class="form-item form-clickable" bindtap="onCategoryClick">
+      <view class="form-label"><text class="required">*</text>衣服类型</view>
+      <view class="form-value {{categoryId ? '' : 'placeholder'}}">
+        <text>{{categoryId ? utils.getCategoryName(categoryMap, categoryId) : '请选择类型'}}</text>
+        <text class="arrow {{showCategoryPicker ? 'up' : 'down'}}">›</text>
+      </view>
     </view>
 
-    <!-- 码数 -->
-    <view class="form-item">
-      <text class="label">尺码</text>
-      <picker class="picker" range="{{sizeOptions}}" value="{{sizeIndex}}" bindchange="onSizeChange">
-        <view class="picker-value {{sizeIndex >= 0 ? '' : 'placeholder'}}">
-          {{sizeIndex >= 0 ? sizeOptions[sizeIndex] : '请选择尺码'}}
-        </view>
-      </picker>
+    <!-- 尺码（多选） -->
+    <view class="checkbox-section">
+      <view class="checkbox-header"><text class="checkbox-label">尺码</text><text class="checkbox-required">*</text></view>
+      <van-checkbox-group value="{{selectedSizes}}" bind:change="onSizeChange" direction="horizontal">
+        <van-checkbox
+          wx:for="{{sizeOptions}}"
+          wx:key="*this"
+          name="{{item}}"
+          shape="square"
+          label-class="checkbox-item-label"
+        >
+          {{item}}
+        </van-checkbox>
+      </van-checkbox-group>
     </view>
 
+    <!-- 商品媒体 -->
+    <view class="media-section">
+      <view class="media-header"><text class="media-label">图片视频</text><text class="media-required">*</text></view>
+      <view class="media-grid">
+        <view class="media-item" wx:for="{{mediaFileList}}" wx:key="index">
+          <image wx:if="{{item.isImage}}" class="media-thumb" src="{{item.thumb || item.url}}" mode="aspectFill" bindtap="onPreviewMedia" data-index="{{index}}" />
+          <view wx:else class="media-thumb media-video-wrap" bindtap="onPreviewMedia" data-index="{{index}}">
+            <view class="video-play-icon">▶</view>
+            <text class="media-video-badge">视频</text>
+          </view>
+          <view class="media-delete-btn" bindtap="onMediaDelete" data-index="{{index}}">×</view>
+        </view>
+        <view class="media-add-btn" catchtap="onChooseMedia" wx:if="{{mediaFileList.length < 10}}">+</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 选填项 -->
+  <view class="form-group">
     <!-- 颜色 -->
     <view class="form-item">
-      <text class="label">颜色</text>
-      <input class="input" placeholder="如 黑色/白色/红色" value="{{color}}" bindinput="onColorInput" />
+      <view class="form-label">颜色</view>
+      <input class="form-input" placeholder="如 黑色/白色/红色" value="{{color}}" bindinput="onColorInput" />
     </view>
 
     <!-- 商品标签 -->
-    <view class="form-item">
-      <text class="label">商品标签</text>
-      <picker class="picker" range="{{tagOptions}}" value="{{tagIndex}}" bindchange="onTagChange">
-        <view class="picker-value {{tagIndex >= 0 ? '' : 'placeholder'}}">
-          {{tagIndex >= 0 ? tagOptions[tagIndex] : '请选择标签（非必填）'}}
-        </view>
-      </picker>
+    <view class="form-item form-clickable" bindtap="onTagClick">
+      <view class="form-label">商品标签</view>
+      <view class="form-value {{tagName ? '' : 'placeholder'}}">
+        <text>{{tagName || '请选择标签（非必填）'}}</text>
+        <text class="arrow {{showTagPicker ? 'up' : 'down'}}">›</text>
+      </view>
     </view>
 
     <!-- 面料 -->
     <view class="form-item">
-      <text class="label">面料</text>
-      <input class="input" placeholder="如 100%聚酯纤维/雪纺/棉" value="{{fabric}}" bindinput="onFabricInput" />
+      <view class="form-label">面料</view>
+      <input class="form-input" placeholder="如 100%聚酯纤维/雪纺/棉" value="{{fabric}}" bindinput="onFabricInput" />
     </view>
 
     <!-- 描述 -->
-    <view class="form-item">
-      <text class="label">商品描述</text>
-      <textarea class="textarea" placeholder="请输入商品描述" value="{{description}}" bindinput="onDescInput" maxlength="500" />
-      <text class="char-count">{{description.length}}/500</text>
-    </view>
-
-    <!-- 图片上传 -->
-    <view class="form-item">
-      <text class="label">商品图片</text>
-      <view class="image-grid">
-        <view class="image-item" wx:for="{{images}}" wx:key="*this">
-          <image class="image-preview" src="{{item}}" mode="aspectFill" />
-          <view class="image-delete" bindtap="onDeleteImage" data-index="{{index}}">×</view>
-        </view>
-        <view class="image-add" bindtap="onChooseImage" wx:if="{{images.length < 9}}">
-          <text class="add-icon">+</text>
-          <text class="add-text">添加图片</text>
-        </view>
-      </view>
+    <view class="form-item form-item-textarea">
+      <view class="form-label">商品描述</view>
+      <textarea class="form-textarea" placeholder="请输入商品描述" maxlength="500" value="{{description}}" bindinput="onDescInput" auto-height />
     </view>
   </view>
 
   <!-- 提交按钮 -->
   <view class="submit-area">
-    <button class="submit-btn" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">提交商品</button>
+    <van-button type="primary" block round bind:click="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">
+      {{productId ? '保存修改' : '提交商品'}}
+    </van-button>
+  </view>
+
+  <!-- 分类选择弹窗 -->
+  <van-popup show="{{showCategoryPicker}}" position="bottom" round>
+    <van-picker
+      columns="{{categoryOptions}}"
+      show-toolbar
+      title="选择类型"
+      bind:confirm="onConfirmCategory"
+      bind:cancel="onCancelCategory"
+    />
+  </van-popup>
+
+  <!-- 标签选择弹窗 -->
+  <van-popup show="{{showTagPicker}}" position="bottom" round>
+    <van-picker
+      columns="{{tagOptions}}"
+      show-toolbar
+      title="选择标签"
+      bind:confirm="onConfirmTag"
+      bind:cancel="onCancelTag"
+    />
+  </van-popup>
+</view>
+
+<!-- 加载中 -->
+<view class="add-page" wx:if="{{loading}}">
+  <view class="loading-wrapper">
+    <text class="loading-text">加载中...</text>
   </view>
 </view>

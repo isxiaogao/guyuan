@@ -84,9 +84,10 @@
   <view class="float-btn" bindtap="onCategoryManageTap">
     <view class="float-btn-text">分类</view>
   </view>
-  <view class="float-btn" bindtap="onLabelTap">
+  <!-- 标签暂时不开放 -->
+  <!-- <view class="float-btn" bindtap="onLabelTap">
     <view class="float-btn-text">标签</view>
-  </view>
+  </view> -->
   <view class="float-btn float-btn-main" bindtap="onAddTap">
     <view class="float-btn-text">+</view>
   </view>

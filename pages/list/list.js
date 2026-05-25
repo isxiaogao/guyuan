@@ -1,7 +1,5 @@
 const { request } = require('../../utils/request')
 
-let searchTimer = null
-
 Page({
   data: {
     categoryId: -1,
@@ -14,11 +12,19 @@ Page({
     searchKeyword: ''
   },
 
+  // 页面实例属性，避免模块级变量导致的 timer 丢失
+  _searchTimer: null,
+
   onLoad(options) {
     const categoryId = options.categoryId !== undefined && Number(options.categoryId) !== 0 ? Number(options.categoryId) : -1
     const categoryName = options.categoryName || '全部'
     this.setData({ categoryId, categoryName, currentCategory: categoryId })
     this.loadCategories()
+    this.loadProducts()
+  },
+
+  onShow() {
+    // 每次显示页面时刷新数据（从详情页返回时触发）
     this.loadProducts()
   },
 
@@ -73,14 +79,14 @@ Page({
     const keyword = e.detail.value.trim()
     this.setData({ searchKeyword: keyword })
 
-    if (searchTimer) clearTimeout(searchTimer)
+    if (this._searchTimer) clearTimeout(this._searchTimer)
 
     if (!keyword) {
       this.loadProducts()
       return
     }
 
-    searchTimer = setTimeout(() => {
+    this._searchTimer = setTimeout(() => {
       this.setData({ currentCategory: -1 })
       this.loadProducts()
     }, 500)
@@ -88,21 +94,21 @@ Page({
 
   onSearchConfirm(e) {
     const keyword = e.detail.value.trim()
-    if (searchTimer) clearTimeout(searchTimer)
+    if (this._searchTimer) clearTimeout(this._searchTimer)
     this.setData({ searchKeyword: keyword, currentCategory: -1 })
     this.loadProducts()
   },
 
   onClearSearch() {
-    if (searchTimer) clearTimeout(searchTimer)
+    if (this._searchTimer) clearTimeout(this._searchTimer)
     this.setData({ searchKeyword: '', currentCategory: -1 })
     this.loadProducts()
   },
 
   onUnload() {
-    if (searchTimer) {
-      clearTimeout(searchTimer)
-      searchTimer = null
+    if (this._searchTimer) {
+      clearTimeout(this._searchTimer)
+      this._searchTimer = null
     }
   }
 })

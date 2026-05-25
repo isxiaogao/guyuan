@@ -8,7 +8,11 @@
       "Bash(curl -s \"http://guyuan.allyd.cn/api/products?pageSize=50\")",
       "Bash(curl -s \"http://guyuan.allyd.cn/api/products/hot\")",
       "Bash(curl -s -X POST http://guyuan.allyd.cn/api/products -H \"Content-Type: application/json\" -H \"x-admin-token: guyuan-admin-token\" -d '{\"name\":\"测试热卖商品\",\"price\":99,\"image\":\"/uploads/test.png\",\"tag\":\"热卖\",\"category\":2,\"description\":\"测试\",\"detail\":\"\",\"images\":[\"/uploads/test.png\"],\"size\":\"M\",\"color\":\"黑色\",\"fabric\":\"棉\"}')",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "PowerShell(New-Item *)",
+      "Bash(npm install *)",
+      "PowerShell(Get-ChildItem \"E:\\\\myspace\\\\guyuan\\\\guyaun-wxapp\\\\miniprogram_npm\\\\@vant\\\\weapp\" -Recurse | Where-Object { $_.Name -match \"^\\(field|checkbox|checkbox-group|uploader|popup|cell|cell-group|button\\)\" } | Select-Object FullName)",
+      "Bash(git reset *)"
     ]
   }
 }

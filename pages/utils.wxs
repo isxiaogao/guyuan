@@ -1,0 +1,15 @@
+// 计算属性模块 - 用于在 wxml 中从 map 获取显示值
+var getCategoryName = function(categoryMap, categoryId) {
+  if (!categoryId) return ''
+  return categoryMap[categoryId] || ''
+}
+
+var getTagName = function(tagMap, tagId) {
+  if (!tagId) return ''
+  return tagMap[tagId] || ''
+}
+
+module.exports = {
+  getCategoryName: getCategoryName,
+  getTagName: getTagName
+}

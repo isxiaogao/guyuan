@@ -104,12 +104,13 @@ Page({
 
     const url = editingTag ? `/api/tags/${tags[editingTagIndex].id}` : '/api/tags'
     const method = editingTag ? 'PUT' : 'POST'
+    const openid = wx.getStorageSync('openid')
 
     wx.request({
       url: `${BASE_URL}${url}`,
       method,
-      header: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN },
-      data: tagForm,
+      header: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN, 'x-user-openid': openid },
+      data: { ...tagForm, openid },
       success: (res) => {
         if (res.data.code === 200) {
           wx.showToast({ title: editingTag ? '更新成功' : '添加成功', icon: 'success' })
@@ -130,12 +131,13 @@ Page({
     const index = e.currentTarget.dataset.index
     const tag = this.data.tags[index]
     const newEnabled = tag.enabled ? 0 : 1
+    const openid = wx.getStorageSync('openid')
 
     wx.request({
       url: `${BASE_URL}/api/tags/${tag.id}`,
       method: 'PUT',
-      header: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN },
-      data: { enabled: newEnabled },
+      header: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN, 'x-user-openid': openid },
+      data: { enabled: newEnabled, openid },
       success: (res) => {
         if (res.data.code === 200) {
           wx.showToast({ title: newEnabled ? '已启用' : '已停用', icon: 'success' })
@@ -159,10 +161,12 @@ Page({
       content: `确定删除标签"${tag.name}"？`,
       success: (res) => {
         if (res.confirm) {
+          const openid = wx.getStorageSync('openid')
           wx.request({
             url: `${BASE_URL}/api/tags/${tag.id}`,
             method: 'DELETE',
-            header: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN },
+            header: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN, 'x-user-openid': openid },
+            data: { openid },
             success: (r) => {
               if (r.data.code === 200) {
                 wx.showToast({ title: '已删除', icon: 'success' })

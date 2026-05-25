@@ -1,0 +1,8 @@
+{
+  "name": "guyaun-wxapp",
+  "version": "1.0.0",
+  "description": "故媛工作室微信小程序",
+  "dependencies": {
+    "@vant/weapp": "^1.11.7"
+  }
+}

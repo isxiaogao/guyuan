@@ -1,176 +1,266 @@
 .add-page {
   padding-bottom: 160rpx;
+  padding-top: 20rpx;
   background: #fafaf8;
   min-height: 100vh;
 }
 
-.form-section {
-  padding: 24rpx;
+/* ====== 表单组 ====== */
+.form-group {
+  margin: 20rpx 24rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
 }
 
+/* ====== 表单项 ====== */
 .form-item {
-  background: #fff;
-  border-radius: 10rpx;
-  padding: 24rpx;
-  margin-bottom: 20rpx;
-  border: 1rpx solid #eeece8;
-}
-
-.form-row {
   display: flex;
-  gap: 20rpx;
-  margin-bottom: 20rpx;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #eeece8;
 }
 
-.form-item.half {
-  flex: 1;
-  background: #fff;
-  border-radius: 10rpx;
-  padding: 24rpx;
-  margin-bottom: 0;
-  border: 1rpx solid #eeece8;
+.form-item:last-child {
+  border-bottom: none;
 }
 
-.label {
-  display: block;
+.form-item-textarea {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-label {
+  width: 140rpx;
   font-size: 28rpx;
-  font-weight: 600;
   color: #2c2c2c;
+  flex-shrink: 0;
+}
+
+.required {
+  color: #b7472a;
+  margin-right: 4rpx;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #2c2c2c;
+  text-align: right;
+}
+
+.form-input::placeholder {
+  color: #999;
+}
+
+.form-value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 28rpx;
+  color: #2c2c2c;
+}
+
+.form-value.placeholder {
+  color: #999;
+}
+
+.form-value .arrow {
+  margin-left: 8rpx;
+  font-size: 32rpx;
+  color: #999;
+  transform: rotate(90deg);
+  transition: transform 0.2s;
+}
+
+.form-value .arrow.up {
+  transform: rotate(-90deg);
+}
+
+.form-clickable {
+  cursor: pointer;
+}
+
+/* ====== textarea ====== */
+.form-textarea {
+  width: 100%;
+  min-height: 120rpx;
+  margin-top: 12rpx;
+  font-size: 28rpx;
+  color: #2c2c2c;
+  line-height: 1.5;
+}
+
+.form-textarea::placeholder {
+  color: #999;
+}
+
+/* ====== 多选区块（尺码） ====== */
+.checkbox-section {
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #eeece8;
+}
+
+.checkbox-header {
+  display: flex;
+  align-items: center;
   margin-bottom: 16rpx;
 }
 
-.input {
-  width: 100%;
-  height: 80rpx;
-  background: #f5f2ee;
-  border-radius: 8rpx;
-  padding: 0 24rpx;
+.checkbox-label {
   font-size: 28rpx;
-  box-sizing: border-box;
+  color: #2c2c2c;
 }
 
-.textarea {
-  width: 100%;
-  height: 200rpx;
-  background: #f5f2ee;
-  border-radius: 8rpx;
-  padding: 20rpx 24rpx;
+.checkbox-required {
+  color: #b7472a;
   font-size: 28rpx;
-  box-sizing: border-box;
+  margin-left: 4rpx;
 }
 
-.char-count {
-  display: block;
-  text-align: right;
-  font-size: 22rpx;
-  color: #999;
-  margin-top: 8rpx;
+.checkbox-section .van-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx 24rpx;
 }
 
-.picker {
-  width: 100%;
+.checkbox-section .van-checkbox {
+  flex: 0 0 auto;
 }
 
-.picker-value {
-  width: 100%;
-  height: 80rpx;
-  background: #f5f2ee;
-  border-radius: 8rpx;
-  padding: 0 24rpx;
-  font-size: 28rpx;
+.checkbox-item-label {
+  font-size: 26rpx !important;
+  color: #2c2c2c !important;
+  padding-left: 8rpx !important;
+}
+
+/* ====== 媒体区块 ====== */
+.media-section {
+  padding: 24rpx 32rpx 32rpx;
+}
+
+.media-header {
   display: flex;
   align-items: center;
-  box-sizing: border-box;
+  margin-bottom: 16rpx;
 }
 
-.picker-value.placeholder {
-  color: #999;
+.media-label {
+  font-size: 28rpx;
+  color: #2c2c2c;
 }
 
-/* 图片网格 */
-.image-grid {
+.media-required {
+  color: #b7472a;
+  font-size: 28rpx;
+  margin-left: 4rpx;
+}
+
+.media-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 16rpx;
 }
 
-.image-item {
+.media-item {
   position: relative;
-  width: 200rpx;
-  height: 200rpx;
-  border-radius: 8rpx;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
   overflow: hidden;
+  border: 1rpx solid #eeece8;
 }
 
-.image-preview {
+.media-thumb {
   width: 100%;
   height: 100%;
+  background: #f5f2ee;
 }
 
-.image-delete {
-  position: absolute;
-  top: 4rpx;
-  right: 4rpx;
-  width: 44rpx;
-  height: 44rpx;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+.media-video-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #3a3a3a, #1a1a1a);
+}
+
+.video-play-icon {
+  width: 60rpx;
+  height: 60rpx;
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  line-height: 1;
+  font-size: 28rpx;
+  color: #b7472a;
 }
 
-.image-add {
-  width: 200rpx;
-  height: 200rpx;
-  background: #f5f2ee;
-  border-radius: 8rpx;
-  border: 2rpx dashed #d4cfc8;
+.media-video-badge {
+  position: absolute;
+  top: 6rpx;
+  left: 6rpx;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+}
+
+.media-delete-btn {
+  position: absolute;
+  top: 4rpx;
+  right: 4rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 28rpx;
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-.add-icon {
-  font-size: 60rpx;
-  color: #d4cfc8;
   line-height: 1;
+  z-index: 2;
 }
 
-.add-text {
-  font-size: 22rpx;
-  color: #999;
-  margin-top: 8rpx;
+.media-add-btn {
+  width: 160rpx;
+  height: 160rpx;
+  border: 2rpx dashed #d4cfc8;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56rpx;
+  color: #d4cfc8;
+  background: #fafaf8;
 }
 
-/* 提交按钮 */
+/* ====== 提交按钮 ====== */
 .submit-area {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 24rpx;
+  padding: 24rpx 32rpx;
   padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
   background: #fff;
   border-top: 1rpx solid #eeece8;
+  z-index: 100;
 }
 
-.submit-btn {
-  background: #b7472a;
-  color: #fff;
-  font-size: 32rpx;
-  font-weight: 600;
-  border-radius: 10rpx;
-  border: none;
-  padding: 20rpx 0;
-  letter-spacing: 1rpx;
+/* ====== 加载中 ====== */
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 300rpx 0;
 }
 
-.submit-btn[disabled] {
-  background: #d4a08a;
-  color: rgba(255, 255, 255, 0.7);
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
 }
